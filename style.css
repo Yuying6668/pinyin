@@ -135,6 +135,9 @@ h3{font-weight:700}
 .pic img{width:4.2rem;height:4.2rem;object-fit:contain}
 .big-ch{font-size:2rem;font-family:"Kaiti SC","STKaiti","KaiTi",serif;color:var(--ink2)}
 .word{font-size:.92rem;font-weight:500;color:var(--ink2)}
+.wplay{display:inline-flex;align-items:center;gap:.25rem;border:1px solid var(--line2);border-radius:99px;padding:.15rem .65rem;background:var(--paper)}
+.wplay:hover{border-color:var(--ink)}
+.wplay .ti{color:var(--terra);font-size:1em}
 .char{font-size:.75rem;color:var(--muted)}
 .tc.dim{opacity:.35}.tc.dim:hover{transform:none;box-shadow:none}
 .none{font-size:2.6rem;color:var(--line2)}

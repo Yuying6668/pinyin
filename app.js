@@ -143,7 +143,7 @@
       if (!ch) return `<div class="tc dim t${t}"><div class="tc-h py">${show(k, t)}</div><div class="tc-b"><span class="none">—</span></div></div>`;
       return `<button class="tc t${t}" data-t="${t}"><div class="tc-h py">${show(k, t)}</div>
         <div class="tc-b">${ex ? `<div class="pic">${pic(ex[1])}</div>` : `<div class="pic big-ch">${ch}</div>`}
-        ${ex ? `<div class="word">${esc(ex[0])}</div><div class="char">${ch}</div>` : ''}</div></button>`;
+        ${ex ? `<div class="word">${REC.has('w-' + k + t) ? `<span class="wplay" data-w="${k + t}">${ic('volume')}${esc(ex[0])}</span>` : esc(ex[0])}</div><div class="char">${ch}</div>` : ''}</div></button>`;
     }).join('');
     const split = i ? `<div class="split py"><button data-l="${i}">${i}</button><span>+</span><button data-l="${f}">${f}</button><span>→</span><b>${show(k)}</b></div>`
       : `<div class="split py"><b>${show(k)}</b></div>`;
@@ -156,6 +156,8 @@
     sh.onclick = (e) => {
       const b = e.target.closest('button');
       if (e.target === sh || (b && b.classList.contains('x'))) return sh.classList.remove('on');
+      const w = e.target.closest('[data-w]');
+      if (w) { playFile('w-' + w.dataset.w, () => {}); return; }
       if (b && b.dataset.t) { playSyl(k, +b.dataset.t); b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
       if (b && b.dataset.l) playLetter(b.dataset.l);
     };
