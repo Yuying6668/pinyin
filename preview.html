@@ -82,7 +82,7 @@ nav a:hover{color:var(--ink)}
 .st{width:54px;height:54px;border-radius:16px;border:1px solid var(--line2);background:var(--paper);font-family:var(--py);font-size:1.75rem;color:var(--ink);transition:all .2s}
 .st:hover{background:var(--ink);color:#fff;border-color:var(--ink);transform:translateY(-3px)}
 .grp.new .st{background:var(--terra-t);border-color:#EBC2B0;color:var(--terra-d)}
-.grp.next .st{border-style:dashed;color:var(--muted);background:transparent}
+.grp.nx .st{border-style:dashed;color:var(--muted);background:transparent}
 .modal{position:fixed;inset:0;background:rgba(31,42,68,.4);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:50;padding:1rem}
 .modal.on{display:flex}
 .box{background:var(--card);border-radius:28px;padding:1rem 1rem 1.2rem;max-width:400px;width:100%;text-align:center;animation:pop .3s cubic-bezier(.34,1.4,.64,1)}
@@ -182,7 +182,7 @@ footer{border-top:1px solid var(--line);padding:1.5rem 0 2.5rem;color:var(--mute
   grp.forEach(([name,ls])=>{const got=ls.filter(x=>learned.has(x));if(!got.length)return;
     const isNew=last&&got.some(x=>last.learn.includes(x));
     h+=`<div class="grp ${isNew?'new':''}"><div class="gl">${name}${isNew?' · 最新':''}</div><div class="ls">${got.map(x=>`<button class="st" data-l="${x}">${x}</button>`).join('')}</div></div>`;});
-  h+=`<div class="grp next"><div class="gl">下一站</div><div class="ls"><button class="st">?</button></div></div>`;
+  h+=`<div class="grp nx"><div class="gl">下一站</div><div class="ls"><button class="st">?</button></div></div>`;
   document.getElementById('groups').innerHTML=h;
   const modal=document.getElementById('modal');let cur=null;
   document.getElementById('groups').addEventListener('click',e=>{const b=e.target.closest('[data-l]');if(!b)return;cur=b.dataset.l;
