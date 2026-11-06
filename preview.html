@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YY pinyin · 首页样稿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky1:#cfeeff;--sky2:#eaf7ff;--cream:#fff8ee;
+  --peach:#ffb4a2;--peach-d:#e8806a;--mint:#a8e6cf;--mint-d:#3fae8a;
+  --butter:#ffe29a;--butter-d:#d9a514;--lilac:#cdb4f6;--lilac-d:#8a63d2;--blue:#9fd3ff;--blue-d:#3a8ee6;
+  --ink:#334155;--muted:#7b8aa0;--card:#ffffffee;
+  --py:'Andika',ui-rounded,'Century Gothic',sans-serif;
+  --fun:'ZCOOL KuaiLe','PingFang SC','Microsoft YaHei',sans-serif;
+  --shadow:0 10px 30px rgba(58,142,230,.12),0 2px 6px rgba(58,142,230,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font-family:system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+  background:linear-gradient(180deg,var(--sky1) 0%,var(--sky2) 42%,var(--cream) 78%);min-height:100vh;overflow-x:hidden}
+.py{font-family:var(--py)}
+.fun{font-family:var(--fun);font-weight:400}
+a{color:inherit;text-decoration:none}
+button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
+
+/* clouds */
+.sky{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.cloud{position:absolute;fill:#fff;opacity:.55;animation:drift linear infinite}
+@keyframes drift{from{transform:translateX(-30vw)}to{transform:translateX(130vw)}}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 1.4rem}
+
+/* header */
+header{display:flex;align-items:center;gap:1rem;padding:1.1rem 0}
+.logo{display:flex;align-items:center;gap:.55rem}
+.logo svg{width:48px;height:48px}
+.logo b{font-family:var(--py);font-size:1.7rem;letter-spacing:.01em}
+.logo b span{color:var(--peach-d)}
+nav{margin-left:auto;display:flex;gap:.35rem;background:#ffffffaa;backdrop-filter:blur(8px);padding:.35rem;border-radius:99px;box-shadow:var(--shadow)}
+nav a{padding:.45rem 1rem;border-radius:99px;font-weight:600;font-size:.95rem;color:var(--ink)}
+nav a.on{background:var(--ink);color:#fff}
+nav a:hover:not(.on){background:#fff}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.25fr 1fr;gap:2rem;align-items:center;padding:1.5rem 0 1rem}
+.hello{position:relative}
+.hello h1{font-family:var(--py);font-size:4.2rem;line-height:1;margin:0 0 .6rem;letter-spacing:-.01em}
+.hello h1 span{color:var(--peach-d)}
+.hello p{font-family:var(--fun);font-size:1.6rem;margin:0;color:#4a5b72}
+.hello .sub{font-family:inherit;font-size:1rem;color:var(--muted);margin-top:.4rem}
+.mascot{width:270px;margin:.4rem 0 0 -10px;animation:bob 3.2s ease-in-out infinite;filter:drop-shadow(0 14px 18px rgba(58,142,230,.18))}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+.prop{transform-origin:214px 84px;animation:flap .25s linear infinite}
+@keyframes flap{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.15)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.trail{position:absolute;left:-60px;bottom:40px;width:150px}
+
+.next{background:var(--card);border-radius:32px;padding:1.6rem 1.8rem;box-shadow:var(--shadow);position:relative}
+.next:before{content:'';position:absolute;top:-22px;right:40px;width:70px;height:44px;background:#fff;border-radius:44px 44px 0 0}
+.chip{display:inline-flex;align-items:center;gap:.4rem;background:#fff1cc;color:#8a6400;font-weight:700;font-size:.9rem;padding:.3rem .9rem;border-radius:99px}
+.next h3{font-family:var(--fun);font-weight:400;font-size:1.55rem;margin:.7rem 0 .8rem}
+.next h3 .py{font-size:1.4rem}
+.next ul{list-style:none;margin:0;padding:0;display:grid;gap:.55rem}
+.next li{display:flex;align-items:center;gap:.7rem;background:#f5faff;border-radius:16px;padding:.55rem .8rem;font-weight:600}
+.next li img,.next li .em{width:34px;height:34px;font-size:26px;line-height:34px;text-align:center;flex:none}
+
+/* zones */
+.zones{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin:2rem 0}
+.zone{border-radius:32px;padding:1.5rem 1.5rem 1.3rem;position:relative;box-shadow:var(--shadow);transition:transform .25s cubic-bezier(.34,1.56,.64,1);overflow:hidden}
+.zone:hover{transform:translateY(-6px) rotate(-.5deg)}
+.zone .art{position:absolute;right:-6px;top:-6px;width:118px;height:118px;display:flex;align-items:center;justify-content:center;font-size:88px}
+.zone .art img{width:110px;height:110px}
+.zone h2{font-family:var(--fun);font-weight:400;font-size:2.1rem;margin:0}
+.zone .who{font-weight:700;opacity:.75;font-size:.95rem}
+.zone .links{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:2.4rem}
+.zone .links a{background:#ffffffcc;border-radius:99px;padding:.42rem .9rem;font-weight:700;font-size:.95rem;transition:transform .15s}
+.zone .links a:hover{transform:scale(1.06);background:#fff}
+.z1{background:linear-gradient(160deg,#ffd9cf,var(--peach))}.z1 h2,.z1 .who{color:#9b3c26}
+.z2{background:linear-gradient(160deg,#d9f6ea,var(--mint))}.z2 h2,.z2 .who{color:#1f6e54}
+.z3{background:linear-gradient(160deg,#fff3c9,var(--butter))}.z3 h2,.z3 .who{color:#7a5a00}
+
+/* route */
+.route-card{background:var(--card);border-radius:32px;padding:1.4rem 1.6rem 1.6rem;box-shadow:var(--shadow);margin-bottom:2rem}
+.route-card h2{font-family:var(--fun);font-weight:400;font-size:1.6rem;margin:0 0 .2rem;display:flex;align-items:center;gap:.6rem}
+.route-card h2 small{font-family:system-ui;font-size:.9rem;color:var(--muted)}
+.route{position:relative;display:flex;flex-wrap:wrap;gap:.9rem .2rem;padding:1rem .2rem .2rem}
+.st{position:relative;display:flex;flex-direction:column;align-items:center;width:74px}
+.st button{width:62px;height:62px;border-radius:50%;font-family:var(--py);font-size:2rem;color:#fff;box-shadow:0 5px 0 rgba(0,0,0,.08);transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.st button:hover{transform:scale(1.15) rotate(-6deg)}
+.st:not(:last-child):after{content:'';position:absolute;top:31px;left:62px;width:16px;border-top:3px dashed #c8dcef}
+.st small{font-size:.7rem;color:var(--muted);margin-top:.25rem;white-space:nowrap}
+.f button{background:var(--peach)}
+.g0 button{background:var(--lilac)}.g1 button{background:var(--blue)}.g2 button{background:var(--mint)}.g3 button{background:var(--butter);color:#7a5a00}
+.st.nx button{background:#fff;color:var(--muted);border:3px dashed #c8dcef;box-shadow:none}
+.plane-mini{width:58px;margin-left:.4rem;align-self:center;animation:bob 2.6s ease-in-out infinite}
+
+/* letter card modal */
+.modal{position:fixed;inset:0;background:rgba(51,65,85,.35);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:1rem}
+.modal.on{display:flex}
+.modal .box{background:#fff;border-radius:32px;padding:1.2rem;max-width:440px;width:100%;text-align:center;animation:pop .35s cubic-bezier(.34,1.56,.64,1)}
+.modal img{width:100%;border-radius:20px}
+.modal .say{margin-top:.8rem;background:var(--blue-d);color:#fff;font-weight:800;padding:.6rem 1.4rem;border-radius:99px;box-shadow:0 4px 0 #2a6fb8}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:1rem 0 2.5rem}
+.badge-preview{position:fixed;left:1rem;bottom:1rem;background:var(--ink);color:#fff;font-size:.8rem;padding:.4rem .8rem;border-radius:99px;z-index:60}
+
+@media (max-width:860px){
+  .hero,.zones{grid-template-columns:1fr}
+  .hello h1{font-size:3rem}
+  nav{display:none}
+  .mascot{width:200px}
+}
+</style>
+</head>
+<body>
+<div class="sky" aria-hidden="true">
+  <svg class="cloud" style="top:8%;width:220px;animation-duration:90s;animation-delay:-20s" viewBox="0 0 200 80"><path d="M30 70h140a28 28 0 0 0 0-56 40 40 0 0 0-74-6A30 30 0 0 0 30 70z"/></svg>
+  <svg class="cloud" style="top:30%;width:150px;animation-duration:120s;animation-delay:-70s;opacity:.7" viewBox="0 0 200 80"><path d="M30 70h140a28 28 0 0 0 0-56 40 40 0 0 0-74-6A30 30 0 0 0 30 70z"/></svg>
+  <svg class="cloud" style="top:55%;width:260px;animation-duration:150s;animation-delay:-40s;opacity:.6" viewBox="0 0 200 80"><path d="M30 70h140a28 28 0 0 0 0-56 40 40 0 0 0-74-6A30 30 0 0 0 30 70z"/></svg>
+</div>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="yy" viewBox="0 0 240 160">
+      <path d="M44 70 L22 26 Q19 18 28 20 L72 50Z" fill="#ffd36e"/>
+      <path d="M40 92 L18 112 Q14 118 22 118 L64 104Z" fill="#ffc94a"/>
+      <rect x="28" y="52" width="176" height="64" rx="32" fill="#ffb4a2"/>
+      <rect x="40" y="88" width="150" height="20" rx="10" fill="#fff" opacity=".45"/>
+      <path d="M104 92 L64 146 Q60 152 68 152 L92 152 L146 96Z" fill="#7fd6b5"/>
+      <path d="M108 72 L84 34 Q80 28 88 28 L104 28 L138 70Z" fill="#a8e6cf"/>
+      <circle cx="74" cy="78" r="7" fill="#fff" opacity=".9"/><circle cx="98" cy="78" r="7" fill="#fff" opacity=".9"/>
+      <circle cx="168" cy="76" r="17" fill="#fff"/><circle cx="172" cy="78" r="8" fill="#334155"/><circle cx="175" cy="74" r="2.6" fill="#fff"/>
+      <circle cx="182" cy="98" r="7" fill="#ff8f86" opacity=".6"/>
+      <path d="M160 100 Q168 108 176 100" stroke="#334155" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <g class="prop"><ellipse cx="214" cy="84" rx="5" ry="30" fill="#e8806a" opacity=".85"/></g>
+      <circle cx="210" cy="84" r="8" fill="#e8806a"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header>
+    <a class="logo" href="#"><svg viewBox="0 0 240 160"><use href="#yy"/></svg><b>YY <span>pinyin</span></b></a>
+    <nav><a class="on" href="#">首页</a><a href="index.html#tools">课堂</a><a href="index.html#games">游戏</a><a href="index.html#chart">拼音表</a><a href="index.html#parents">家长</a><a href="index.html#res">资源库</a></nav>
+  </header>
+
+  <section class="hero">
+    <div class="hello">
+      <h1>YY <span>pinyin</span></h1>
+      <p>和小Y一起，飞过每一个拼音站！</p>
+      <p class="sub">拼音识字班B · Pinyin for kids in Denmark</p>
+      <svg class="mascot" viewBox="0 0 240 160" role="img" aria-label="小Y 飞机"><use href="#yy"/></svg>
+    </div>
+    <div class="next" id="next"></div>
+  </section>
+
+  <section class="zones">
+    <a class="zone z1" href="index.html#tools"><div class="art" data-fl="🧑‍🏫"></div>
+      <div class="who">老师 · Lærer</div><h2>课堂</h2>
+      <div class="links"><span>🃏 闪卡</span><span>👥 分组</span><span>⭐ 积分</span><span>🎡 转盘</span><span>⏱️ 计时</span></div></a>
+    <a class="zone z2" href="index.html#games"><div class="art" data-fl="🎮"></div>
+      <div class="who">小朋友 · Børn</div><h2>游戏</h2>
+      <div class="links"><span>🐹 打地鼠</span><span>💥 碰一碰</span><span>👂 听音找飞机</span><span>🗺️ 拼音表</span></div></a>
+    <a class="zone z3" href="index.html#parents"><div class="art" data-fl="🏡"></div>
+      <div class="who">家长 · Forældre</div><h2>家长</h2>
+      <div class="links"><span>📅 每周课程</span><span>📂 资源库</span><span>💡 陪练小贴士</span></div></a>
+  </section>
+
+  <section class="route-card">
+    <h2>✈️ 已经飞过的拼音站 <small>点一点，看卡片 · Tryk og se</small></h2>
+    <div class="route" id="route"></div>
+  </section>
+  <footer>YY pinyin · 拼音识字班B</footer>
+</div>
+
+<div class="modal" id="modal"><div class="box"><img id="mimg" alt=""><button class="say" id="msay">🔊 读一读 Lyt</button></div></div>
+<div class="badge-preview">首页样稿 · Preview</div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  /* Fluent 3D Emoji（微软开源，MIT 授权）——加载失败时自动退回 emoji */
+  const FL = {'🧑‍🏫':['Teacher','Default'],'🎮':['Video game'],'🏡':['House with garden'],'🦆':['Duck'],'✈️':['Airplane'],'📝':['Memo'],'🎲':['Game die'],'🛂':['Passport control']};
+  const base='https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/';
+  function flUrl(e){const f=FL[e];if(!f)return null;const n=f[0].toLowerCase().replace(/ /g,'_');
+    return f[1]?`${base}${encodeURIComponent(f[0])}/Default/3D/${n}_3d_default.png`:`${base}${encodeURIComponent(f[0])}/3D/${n}_3d.png`;}
+  window.flImg=function(e,cls){const u=flUrl(e);return u?`<img class="${cls||''}" src="${u}" alt="" onerror="this.outerHTML='<span class=em>${e}</span>'">`:`<span class="em">${e}</span>`;};
+  document.querySelectorAll('[data-fl]').forEach(el=>{el.innerHTML=flImg(el.dataset.fl);});
+
+  const today=new Date().toISOString().slice(0,10);
+  const next=WEEKS.find(w=>w.date>=today)||WEEKS[WEEKS.length-1];
+  const [,m,d]=next.date.split('-');
+  const icons=['✈️','🎲','🛂','📝'];
+  document.getElementById('next').innerHTML=`<span class="chip">📅 下一次课 · ${+m}月${+d}日</span>
+    <h3>${next.title.replace(/([a-zü ]{3,})/g,'<span class="py">$1</span>')}</h3>
+    <ul>${next.points.map((p,i)=>`<li>${flImg(icons[i%icons.length])}<span>${p}</span></li>`).join('')}</ul>`;
+
+  const learned=new Set(WEEKS.filter(w=>w.date<=today).flatMap(w=>w.learn));
+  const groups=INITIAL_GROUPS;
+  let html='';
+  FINALS.filter(f=>learned.has(f)).forEach(f=>html+=`<div class="st f"><button data-l="${f}">${f}</button></div>`);
+  groups.forEach((g,gi)=>g.filter(x=>learned.has(x)).forEach(x=>html+=`<div class="st g${gi}"><button data-l="${x}">${x}</button><small>${LETTER[x]?LETTER[x][1].replace(/ .*/,''):''}</small></div>`));
+  html+=`<div class="st nx"><button>?</button><small>下一站</small></div><svg class="plane-mini" viewBox="0 0 240 160"><use href="#yy"/></svg>`;
+  document.getElementById('route').innerHTML=html;
+
+  const modal=document.getElementById('modal');let cur=null;
+  document.getElementById('route').addEventListener('click',e=>{const b=e.target.closest('[data-l]');if(!b)return;cur=b.dataset.l;
+    document.getElementById('mimg').src='img/letters/'+(cur==='ü'?'v':cur)+'.jpg';modal.classList.add('on');say();});
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('on');});
+  document.getElementById('msay').addEventListener('click',e=>{e.stopPropagation();say();});
+  function say(){if(!cur||!('speechSynthesis' in window))return;const t=INITIAL_SAY[cur]||(SYL[cur==='ü'?'v':cur]||[])[0];if(!t)return;
+    speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='zh-CN';u.rate=.75;speechSynthesis.speak(u);}
+})();
+</script>
+</body>
+</html>
