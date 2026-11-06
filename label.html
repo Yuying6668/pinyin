@@ -79,7 +79,7 @@ textarea{width:100%;height:9rem;font-family:monospace;font-size:.8rem;border-rad
         ${r.type==='word'?`<input data-a="word" value="${r.word}" placeholder="例词，如 鸽子">`:''}</div></div>`).join('');
     document.getElementById('prog').textContent=`已确认 ${rows.filter(r=>r.checked).length} / ${rows.length}`;
   }
-  function play(i){cur=i;audio.src='audio/raw/'+rows[i].file;audio.play();rows[i].checked=true;save();render();
+  function play(i){cur=i;audio.src='audio/raw/'+String(rows[i].id).padStart(3,'0')+'.mp3';audio.play();rows[i].checked=true;save();render();
     const el=document.querySelector(`.row[data-i="${i}"]`);if(el)el.scrollIntoView({block:'center',behavior:'smooth'});}
   function propagate(i){for(let j=i+1;j<rows.length&&!rows[j].touched;j++){rows[j].syl=rows[i].syl;
     if(rows[j].type==='word'){const ex=EX[key(rows[j].syl)+rows[j].tone];rows[j].word=ex?ex[0]:'';}}}
