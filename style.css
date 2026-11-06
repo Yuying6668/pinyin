@@ -128,14 +128,14 @@ h3{font-weight:700}
 .tcs{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-top:1rem}
 .tc{border-radius:20px;overflow:hidden;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;padding:0;transition:transform .2s,box-shadow .2s}
 .tc:hover{transform:translateY(-3px);box-shadow:var(--sh)}
-.tc-h{background:var(--c);color:#fff;font-family:var(--py);font-size:2.3rem;padding:.35rem 0}
+.tc-h{background:var(--c);color:#fff;font-family:var(--py);font-size:3.4rem;line-height:1.15;padding:.4rem 0 .5rem}
 .t1{--c:var(--terra)}.t2{--c:var(--mustard)}.t3{--c:var(--sage-d)}.t4{--c:var(--blue-d)}
 .tc-b{padding:.8rem .4rem 1rem;display:flex;flex-direction:column;align-items:center;gap:.15rem;flex:1;justify-content:center}
-.pic{height:5.2rem;display:flex;align-items:center;justify-content:center;font-size:4rem;line-height:1}
-.pic img{width:5rem;height:5rem;object-fit:contain}
-.big-ch{font-size:3.4rem;font-family:"Kaiti SC","STKaiti","KaiTi",serif;color:var(--ink)}
-.word{font-size:1.25rem;font-weight:700}
-.char{font-size:.9rem;color:var(--muted)}
+.pic{height:4.4rem;display:flex;align-items:center;justify-content:center;font-size:3.4rem;line-height:1}
+.pic img{width:4.2rem;height:4.2rem;object-fit:contain}
+.big-ch{font-size:2rem;font-family:"Kaiti SC","STKaiti","KaiTi",serif;color:var(--ink2)}
+.word{font-size:.92rem;font-weight:500;color:var(--ink2)}
+.char{font-size:.75rem;color:var(--muted)}
 .tc.dim{opacity:.35}.tc.dim:hover{transform:none;box-shadow:none}
 .none{font-size:2.6rem;color:var(--line2)}
 .hint{color:var(--muted);font-size:.85rem;margin:.9rem 0 0}
@@ -285,6 +285,6 @@ button.ch.ok:hover{transform:translateY(-2px);border-color:var(--ink)}
   .chart{grid-template-columns:3rem repeat(6,1fr);gap:.3rem}
   .ch{font-size:1.45rem;min-height:3.3rem}.ch.ok em,.ih i{display:none}
   .tcs{grid-template-columns:1fr 1fr}
-  .opt{font-size:2.3rem}.tone{font-size:1.8rem}
+  .opt{font-size:2.3rem}.tone{font-size:1.8rem}.tc-h{font-size:2.6rem}
   .field{gap:.5rem;padding:.6rem}.hole{height:8rem}.mole .lbl{font-size:1.6rem}
 }
