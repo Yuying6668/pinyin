@@ -97,7 +97,7 @@
     '🐔': 'Chicken', '🪵': 'Wood', '🛋️': 'Couch and lamp', '🧧': 'Red envelope', '🪓': 'Axe', '🧱': 'Brick', '🥁': 'Drum',
     '🐘': 'Elephant', '🎶': 'Musical notes', '🌍': 'Globe showing europe-africa', '📖': 'Open book', '👦': 'Boy*', '🗼': 'Tokyo tower',
     '🏃': 'Person running*', '🖼️': 'Framed picture', '🪴': 'Potted plant', '🐰': 'Rabbit face', '🤲': 'Palms up together*',
-    '🟤': 'Brown circle', '👋': 'Waving hand*', '😡': 'Enraged face', '👧': 'Girl*', '🤝': 'Handshake*', '📯': 'Postal horn',
+    '🟤': 'Brown circle', '👋': 'Waving hand*', '😡': 'Pouting face', '👧': 'Girl*', '🤝': 'Handshake', '📯': 'Postal horn',
     '🌶️': 'Hot pepper', '😄': 'Grinning face with smiling eyes', '🍐': 'Pear', '🍑': 'Peach', '🧍': 'Person standing*',
     '🦒': 'Giraffe', '🫏': 'Donkey', '🧳': 'Luggage', '🟢': 'Green circle', '🦆': 'Duck', '🕊️': 'Dove', '1️⃣': 'Keycap 1',
     '📚': 'Books', '☕': 'Hot beverage', '🃏': 'Joker', '🥤': 'Cup with straw', '🐸': 'Frog', '🤧': 'Sneezing face', '🏫': 'School',
