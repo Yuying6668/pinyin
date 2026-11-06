@@ -18,7 +18,7 @@ h1{font-size:1.5rem;margin:.2rem 0 .4rem}
 .bar{position:sticky;top:0;z-index:5;background:rgba(246,241,233,.95);backdrop-filter:blur(6px);padding:.7rem 0;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:.8rem}
 button{font:inherit;cursor:pointer;border:1px solid var(--line2);background:var(--card);border-radius:10px;padding:.35rem .7rem}
 .pri{background:var(--terra);color:#fff;border-color:var(--terra);font-weight:700}
-.row{display:grid;grid-template-columns:4.6rem 9.5rem 8rem 1fr;gap:.6rem;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.55rem .7rem;margin-bottom:.45rem}
+.row{display:grid;grid-template-columns:4.6rem 9.5rem 7rem 1fr;gap:.6rem;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.55rem .7rem;margin-bottom:.45rem}
 .row.cur{border:2px solid var(--terra)}
 .row.done{background:#fbfaf6}
 .row.skip{opacity:.45}
@@ -29,7 +29,8 @@ select{font:inherit;font-family:'Andika',sans-serif;font-size:1.15rem;padding:.2
 .tones{display:flex;gap:.3rem;flex-wrap:wrap;align-items:center}
 .tones button{font-family:'Andika',sans-serif;font-size:1.25rem;min-width:3.4rem}
 .tones button.on{background:var(--sage-d);color:#fff;border-color:var(--sage-d)}
-.tones input{font:inherit;font-size:1rem;padding:.3rem .5rem;border-radius:10px;border:1px solid var(--line2);width:9rem}
+.tones input{font:inherit;font-size:1rem;padding:.35rem .6rem;border-radius:10px;border:1px dashed var(--line2);flex:1;min-width:11rem;background:#fbfaf6}
+.tones input.on{border:2px solid var(--terra);background:#fff}
 .dur{font-size:.72rem;color:var(--muted);text-align:center}
 .prog{font-weight:700}
 textarea{width:100%;height:9rem;font-family:monospace;font-size:.8rem;border-radius:12px;border:1px solid var(--line2);padding:.6rem;margin-top:.6rem}
@@ -40,7 +41,7 @@ textarea{width:100%;height:9rem;font-family:monospace;font-size:.8rem;border-rad
 <body><div class="wrap">
 <h1>录音对号 · Gkhjqx 两拼拼读</h1>
 <div class="help">
-  录音已经按停顿切成 <b id="n"></b> 段。每一段：<b>① 点 ▶ 听</b> → <b>② 选类型</b>（音节 / 例词 / 不要）→ <b>③ 选音节和声调</b>，如果是例词，确认一下词语。<br>
+  录音已经按停顿切成 <b id="n"></b> 段。每一段：<b>① 点 ▶ 听</b> → <b>② 选类型</b>（音节 / 例词 / 不要）→ <b>③ 选音节和声调</b>，如果是例词，<b>直接在右边的输入框里写上你读的词</b>（比如"鸭子嘎嘎"），音节和声调选这个词里要学的那个（比如 gā）。<br>
   我已经<b>预先猜好</b>：声调是电脑按音高猜的，长一点的段落猜成"例词"，音节默认沿用上一段。<b>改了某一段的音节，后面没改过的段落会自动跟着变</b>，所以通常只需要在换音节的地方改一下。<br>
   快捷键：<b>空格</b> 播放当前段，<b>↓ / 回车</b> 下一段并播放，<b>1–4</b> 选声调。全部看完后点 <b>"完成，复制结果"</b>，把结果粘贴回聊天里给我。
 </div>
@@ -76,7 +77,7 @@ textarea{width:100%;height:9rem;font-family:monospace;font-size:.8rem;border-rad
       <div class="types">${[['syl','音节'],['word','例词'],['skip','不要']].map(([t,n])=>`<button data-a="type" data-v="${t}" class="${r.type===t?'on':''}">${n}</button>`).join('')}</div>
       <div><select data-a="syl">${SYLS.map(s=>`<option ${s===r.syl?'selected':''}>${s}</option>`).join('')}</select></div>
       <div class="tones">${[1,2,3,4].map(t=>`<button data-a="tone" data-v="${t}" class="${r.tone===t?'on':''}">${mark(r.syl,t)}</button>`).join('')}
-        ${r.type==='word'?`<input data-a="word" value="${r.word}" placeholder="例词，如 鸽子">`:''}</div></div>`).join('');
+        <input data-a="word" value="${r.word||''}" placeholder="例词（如：鸭子嘎嘎）" class="${r.type==='word'?'on':''}"></div></div>`).join('');
     document.getElementById('prog').textContent=`已确认 ${rows.filter(r=>r.checked).length} / ${rows.length}`;
   }
   function play(i){cur=i;audio.src='audio/raw/'+String(rows[i].id).padStart(3,'0')+'.mp3';audio.play();rows[i].checked=true;save();render();
@@ -96,7 +97,7 @@ textarea{width:100%;height:9rem;font-family:monospace;font-size:.8rem;border-rad
   document.getElementById('list').addEventListener('change',e=>{
     const row=e.target.closest('.row');const i=+row.dataset.i,r=rows[i];
     if(e.target.dataset.a==='syl'){r.syl=e.target.value;r.touched=true;propagate(i);}
-    if(e.target.dataset.a==='word'){r.word=e.target.value.trim();r.touched=true;}
+    if(e.target.dataset.a==='word'){r.word=e.target.value.trim();r.touched=true;r.type=r.word?'word':(r.type==='word'?'syl':r.type);}
     r.checked=true;cur=i;save();render();
   });
   document.addEventListener('keydown',e=>{
