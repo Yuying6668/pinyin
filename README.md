@@ -1,4 +1,4 @@
-# YY pinyin ✈️
+# YY Chinese ✈️
 
 拼音识字班B 的拼音课堂工具 + 家长练习网站。
 网址：https://yuying6668.github.io/pinyin/

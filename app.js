@@ -182,7 +182,7 @@
     return `
     <section class="hero"><div>
       <div class="eyebrow">${SITE.className} · PINYIN FOR KIDS · DANMARK</div>
-      <h1>YY <span>pinyin</span></h1>
+      <h1>YY <span>Chinese</span></h1>
       <p>和小Y一起，飞过每一个拼音站。<br>课堂上投影，回家也能练。</p>
       <div class="cta"><a class="go" href="#tools">${ic('presentation')}开始上课</a><a class="go ghost" href="#parents">${ic('home-heart')}家长专区</a></div></div>
       <div class="stage">
@@ -578,7 +578,8 @@
   /* ================= 路由 ================= */
   let cleanup = null;
   function route() {
-    const [name, sub] = (location.hash.slice(1) || 'home').split('/');
+    let [name, sub] = (location.hash.slice(1) || 'home').split('/');
+    if (window.ONLY) { name = window.ONLY; sub = window.ONLY_SUB; }
     const v = V[name] || V.home;
     if (typeof cleanup === 'function') cleanup(); cleanup = null;
     const main = $('#main'), fresh = main.cloneNode(false); main.replaceWith(fresh);
