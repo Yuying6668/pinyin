@@ -139,6 +139,7 @@ h3{font-weight:700}
 .wplay:hover{border-color:var(--ink)}
 .wplay .ti{color:var(--terra);font-size:1em}
 .char{font-size:.75rem;color:var(--muted)}
+.en{font-family:'Andika',sans-serif;font-size:.78rem;line-height:1.2;color:var(--sage-d);margin-top:.1rem}
 .tc.dim{opacity:.35}.tc.dim:hover{transform:none;box-shadow:none}
 .none{font-size:2.6rem;color:var(--line2)}
 .hint{color:var(--muted);font-size:.85rem;margin:.9rem 0 0}

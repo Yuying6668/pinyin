@@ -143,7 +143,7 @@
       if (!ch) return `<div class="tc dim t${t}"><div class="tc-h py">${show(k, t)}</div><div class="tc-b"><span class="none">—</span></div></div>`;
       return `<button class="tc t${t}" data-t="${t}"><div class="tc-h py">${show(k, t)}</div>
         <div class="tc-b">${ex ? `<div class="pic">${pic(ex[1])}</div>` : `<div class="pic big-ch">${ch}</div>`}
-        ${ex ? `<div class="word">${REC.has('w-' + k + t) ? `<span class="wplay" data-w="${k + t}">${ic('volume')}${esc(ex[0])}</span>` : esc(ex[0])}</div><div class="char">${ch}</div>` : ''}</div></button>`;
+        ${ex ? `<div class="word">${REC.has('w-' + k + t) ? `<span class="wplay" data-w="${k + t}">${ic('volume')}${esc(ex[0])}</span>` : esc(ex[0])}</div>${ex[2] ? `<div class="en">${esc(ex[2])}</div>` : ''}<div class="char">${ch}</div>` : ''}</div></button>`;
     }).join('');
     const split = i ? `<div class="split py"><button data-l="${i}">${i}</button><span>+</span><button data-l="${f}">${f}</button><span>→</span><b>${show(k)}</b></div>`
       : `<div class="split py"><b>${show(k)}</b></div>`;
