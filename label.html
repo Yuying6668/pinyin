@@ -18,12 +18,12 @@ h1{font-size:1.5rem;margin:.2rem 0 .4rem}
 .bar{position:sticky;top:0;z-index:5;background:rgba(246,241,233,.95);backdrop-filter:blur(6px);padding:.7rem 0;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:.8rem}
 button{font:inherit;cursor:pointer;border:1px solid var(--line2);background:var(--card);border-radius:10px;padding:.35rem .7rem}
 .pri{background:var(--terra);color:#fff;border-color:var(--terra);font-weight:700}
-.row{display:grid;grid-template-columns:5.6rem 9.5rem 7rem 1fr;gap:.6rem;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.55rem .7rem;margin-bottom:.45rem}
+.row{display:grid;grid-template-columns:5.6rem 11.5rem 7rem 1fr;gap:.6rem;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.55rem .7rem;margin-bottom:.45rem}
 .row.cur{border:2px solid var(--terra)}
 .row.done{background:#fbfaf6}
 .row.skip{opacity:.45}
 .play{font-weight:700;width:100%}
-.types button{padding:.3rem .5rem;font-size:.85rem}
+.types button{padding:.3rem .4rem;font-size:.8rem}
 .types button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 select{font:inherit;font-family:'Andika',sans-serif;font-size:1.15rem;padding:.25rem .4rem;border-radius:10px;border:1px solid var(--line2);background:var(--card);width:100%}
 .tones{display:flex;gap:.3rem;flex-wrap:wrap;align-items:center}
@@ -44,7 +44,7 @@ textarea{width:100%;height:9rem;font-family:monospace;font-size:.8rem;border-rad
 <h1>录音对号 · bpmfdtnl 两拼拼读</h1>
 <div class="help">
   录音已经按停顿切成 <b id="n"></b> 段。每一段：<b>① 点 ▶ 听</b> → <b>② 选类型</b>（音节 / 例词 / 不要）→ <b>③ 选音节和声调</b>，如果是例词，<b>直接在右边的输入框里写上你读的词</b>（比如"鸭子嘎嘎"），音节和声调选这个词里要学的那个（比如 gā）。<br>
-  我已经<b>按录音清单的顺序预先填好</b>了每一段，大部分只需要听一下、确认对就行。标了<b>"可能是重读"</b>的段落，是我猜你重读的地方（同一个音读两遍时，网站会用后面那一遍；读错的那遍可以点"不要"）。<br>
+  开头 14 段是你单独读的字母 <b>a o e i u ü b p m f d t n l</b>（类型是"字母"），后面从 ba 开始。我已经<b>按录音清单的顺序预先填好</b>了每一段，大部分只需要听一下、确认对就行。标了<b>"可能是重读"</b>的段落，是我猜你重读的地方（同一个音读两遍时，网站会用后面那一遍；读错的那遍可以点"不要"）。<br>
   <b>如果从某一段开始整体对不上了：</b>那一段是多出来的（咳嗽、重读），点它的 <b>"⤵ 多一段"</b>，后面的标签会整体往下挪一格；如果是清单里某个音你没读，点 <b>"⤴ 没读这个"</b>，后面的标签会整体往上挪一格。<br>
   快捷键：<b>空格</b> 播放当前段，<b>↓ / 回车</b> 下一段并播放，<b>1–4</b> 选声调。全部看完后点 <b>"完成，复制结果"</b>，把结果粘贴回聊天里给我。
 </div>
@@ -56,12 +56,12 @@ textarea{width:100%;height:9rem;font-family:monospace;font-size:.8rem;border-rad
 <script src="data.js?v=20261112"></script>
 <script>
 (async function(){
-  const SYLS=["a","o","e","i","u","ü","ba", "bo", "bi", "bu", "pa", "po", "pi", "pu", "ma", "mo", "mi", "mu", "fa", "fo", "fu", "da", "de", "di", "du", "ta", "te", "ti", "tu", "na", "ni", "nu", "nü", "la", "le", "li", "lu", "lü"];
+  const SYLS=["a","o","e","i","u","ü","b","p","m","f","d","t","n","l","ba", "bo", "bi", "bu", "pa", "po", "pi", "pu", "ma", "mo", "mi", "mu", "fa", "fo", "fu", "da", "de", "di", "du", "ta", "te", "ti", "tu", "na", "ni", "nu", "nü", "la", "le", "li", "lu", "lü"];
   const key=s=>({'nü':'nv','lü':'lv','ü':'v'}[s]||s);const unkey=s=>({nv:'nü',lv:'lü',v:'ü'}[s]||s);
   const MARK={a:'āáǎà',o:'ōóǒò',e:'ēéěè',i:'īíǐì',u:'ūúǔù','ü':'ǖǘǚǜ'};
   const mark=(s,t)=>{const m=s.match(/[aoeiuü]/);return m?s.replace(m[0],MARK[m[0]][t-1]):s;};
   const clips=await fetch('audio/raw/clips.json').then(r=>r.json());
-  let saved={};try{saved=JSON.parse(localStorage.getItem('yy-label-bpm')||'{}')}catch(e){}
+  let saved={};try{saved=JSON.parse(localStorage.getItem('yy-label-bpm2')||'{}')}catch(e){}
   let prevS='ga';
   const rows=clips.map(c=>{
     const sv=saved[c.id];
@@ -72,12 +72,12 @@ textarea{width:100%;height:9rem;font-family:monospace;font-size:.8rem;border-rad
   rows.forEach(r=>{if(!r.word&&r.type==='word'){const ex=EX[key(r.syl)+r.tone];r.word=ex?ex[0]:'';}});
   document.getElementById('n').textContent=rows.length;
   let cur=0; const audio=new Audio(); let chain=false;
-  const save=()=>{try{const o={};rows.forEach(r=>o[r.id]=r);localStorage.setItem('yy-label-bpm',JSON.stringify(o))}catch(e){}};
+  const save=()=>{try{const o={};rows.forEach(r=>o[r.id]=r);localStorage.setItem('yy-label-bpm2',JSON.stringify(o))}catch(e){}};
   function render(){
     const L=document.getElementById('list');
     L.innerHTML=rows.map((r,i)=>`<div class="row ${i===cur?'cur':''} ${r.checked?'done':''} ${r.type==='skip'?'skip':''}" data-i="${i}">
       <div><button class="play" data-a="play">▶ ${String(r.id).padStart(3,'0')}</button><div class="dur">${r.dur}s</div>${r.flag?`<div class="flag">${r.flag}</div>`:''}<div class="shift"><button data-a="extra" title="这一段是多出来的">⤵ 多一段</button><button data-a="miss" title="清单里这个音没读">⤴ 没读这个</button></div></div>
-      <div class="types">${[['syl','音节'],['word','例词'],['skip','不要']].map(([t,n])=>`<button data-a="type" data-v="${t}" class="${r.type===t?'on':''}">${n}</button>`).join('')}</div>
+      <div class="types">${[['letter','字母'],['syl','音节'],['word','例词'],['skip','不要']].map(([t,n])=>`<button data-a="type" data-v="${t}" class="${r.type===t?'on':''}">${n}</button>`).join('')}</div>
       <div><select data-a="syl">${SYLS.map(s=>`<option ${s===r.syl?'selected':''}>${s}</option>`).join('')}</select></div>
       <div class="tones">${[1,2,3,4].map(t=>`<button data-a="tone" data-v="${t}" class="${r.tone===t?'on':''}">${mark(r.syl,t)}</button>`).join('')}
         <input data-a="word" value="${r.word||''}" placeholder="例词（如：鸭子嘎嘎）" class="${r.type==='word'?'on':''}"></div></div>`).join('');

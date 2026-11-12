@@ -73,7 +73,7 @@
     a.onerror = fb; a.play().then(() => { done = true; }).catch(fb);
   }
   const playSyl = (k, t) => playFile(k + t, () => { const c = SYL[k] && SYL[k][t - 1]; c ? speak(c) : toast('这个声调还没有录音'); });
-  const playLetter = (x) => (INITIAL_SAY[x] ? playFile('letter-' + x, () => speak(INITIAL_SAY[x])) : playSyl(x === 'ü' ? 'v' : x, firstTone(x === 'ü' ? 'v' : x) || 1));
+  const playLetter = (x) => (INITIAL_SAY[x] ? playFile('letter-' + x, () => speak(INITIAL_SAY[x])) : playFile('letter-' + (x === 'ü' ? 'v' : x), () => playSyl(x === 'ü' ? 'v' : x, firstTone(x === 'ü' ? 'v' : x) || 1)));
   let actx;
   function beep(ok) {
     try {
