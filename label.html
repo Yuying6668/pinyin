@@ -56,8 +56,8 @@ textarea{width:100%;height:9rem;font-family:monospace;font-size:.8rem;border-rad
 <script src="data.js?v=20261112"></script>
 <script>
 (async function(){
-  const SYLS=["ba", "bo", "bi", "bu", "pa", "po", "pi", "pu", "ma", "mo", "mi", "mu", "fa", "fo", "fu", "da", "de", "di", "du", "ta", "te", "ti", "tu", "na", "ni", "nu", "nü", "la", "le", "li", "lu", "lü"];
-  const key=s=>({'nü':'nv','lü':'lv','ü':'v'}[s]||s);const unkey=s=>({nv:'nü',lv:'lü'}[s]||s);
+  const SYLS=["a","o","e","i","u","ü","ba", "bo", "bi", "bu", "pa", "po", "pi", "pu", "ma", "mo", "mi", "mu", "fa", "fo", "fu", "da", "de", "di", "du", "ta", "te", "ti", "tu", "na", "ni", "nu", "nü", "la", "le", "li", "lu", "lü"];
+  const key=s=>({'nü':'nv','lü':'lv','ü':'v'}[s]||s);const unkey=s=>({nv:'nü',lv:'lü',v:'ü'}[s]||s);
   const MARK={a:'āáǎà',o:'ōóǒò',e:'ēéěè',i:'īíǐì',u:'ūúǔù','ü':'ǖǘǚǜ'};
   const mark=(s,t)=>{const m=s.match(/[aoeiuü]/);return m?s.replace(m[0],MARK[m[0]][t-1]):s;};
   const clips=await fetch('audio/raw/clips.json').then(r=>r.json());
