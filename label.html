@@ -60,7 +60,7 @@ textarea{width:100%;height:9rem;font-family:monospace;font-size:.8rem;border-rad
   const key=s=>({'nü':'nv','lü':'lv','ü':'v'}[s]||s);const unkey=s=>({nv:'nü',lv:'lü',v:'ü'}[s]||s);
   const MARK={a:'āáǎà',o:'ōóǒò',e:'ēéěè',i:'īíǐì',u:'ūúǔù','ü':'ǖǘǚǜ'};
   const mark=(s,t)=>{const m=s.match(/[aoeiuü]/);return m?s.replace(m[0],MARK[m[0]][t-1]):s;};
-  const clips=await fetch('audio/raw/clips.json').then(r=>r.json());
+  const clips=await fetch('audio/raw/clips.json?t='+Date.now()).then(r=>r.json());
   let saved={};try{saved=JSON.parse(localStorage.getItem('yy-label-bpm2')||'{}')}catch(e){}
   let prevS='ga';
   const rows=clips.map(c=>{
