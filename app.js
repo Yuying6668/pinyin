@@ -36,16 +36,16 @@
     { id: 'bpmf', name: 'b p m f d t n l', inis: ['b', 'p', 'm', 'f', 'd', 't', 'n', 'l'] },
     { id: 'gkhjqx', name: 'g k h j q x', inis: ['g', 'k', 'h', 'j', 'q', 'x'] },
   ].map((r) => ({ ...r, inis: r.inis.filter((i) => i === '' || learned.has(i)) })).filter((r) => r.inis.length);
-  function pool(rangeId) {
+  function pool(rangeId, recOnly) {
     const r = RANGES.find((x) => x.id === rangeId) || RANGES[0], out = [];
     Object.keys(SYL).forEach((k) => {
       if (!r.inis.includes(iniOf(k))) return;
       if (iniOf(k) === '' && !learned.has(finOf(k))) return;
-      [1, 2, 3, 4].forEach((t) => { if (hasTone(k, t)) out.push([k, t]); });
+      [1, 2, 3, 4].forEach((t) => { if (hasTone(k, t) && (!recOnly || REC.has(k + t))) out.push([k, t]); });
     });
     return out;
   }
-  const rangeBar = (cur) => `<div class="ranges">${RANGES.map((r) =>
+  const rangeBar = (cur, recOnly) => `<div class="ranges">${RANGES.filter((r) => !recOnly || pool(r.id, true).length >= 4).map((r) =>
     `<button class="rg ${r.id === cur ? 'sel' : ''}" data-range="${r.id}">${r.name}</button>`).join('')}</div>`;
 
   const store = {
@@ -73,6 +73,8 @@
     a.onerror = fb; a.play().then(() => { done = true; }).catch(fb);
   }
   const playSyl = (k, t) => playFile(k + t, () => { const c = SYL[k] && SYL[k][t - 1]; c ? speak(c) : toast('这个声调还没有录音'); });
+  const recSyl = (k, t) => { if (REC.has(k + t)) playFile(k + t, () => {}); };
+  const recLetter = (x) => { const n = 'letter-' + (x === 'ü' ? 'v' : x); if (REC.has(n)) playFile(n, () => {}); };
   const playLetter = (x) => (INITIAL_SAY[x] ? playFile('letter-' + x, () => speak(INITIAL_SAY[x])) : playFile('letter-' + (x === 'ü' ? 'v' : x), () => playSyl(x === 'ü' ? 'v' : x, firstTone(x === 'ü' ? 'v' : x) || 1)));
   let actx;
   function beep(ok) {
@@ -462,7 +464,7 @@
     return w.length === n ? '平局！每个队都很棒 🎉' : w.length > 1 ? `${w.join('、')}并列第一！🏆` : `${w[0]}赢啦！🏆`; };
 
   GAMES.mole = {
-    html: () => `${rangeBar(store.get('moleR', 'all'))}${teamBar('moleT', store.get('moleT', 2))}
+    html: () => `${rangeBar(store.get('moleR', 'all'), true)}${teamBar('moleT', store.get('moleT', 2))}
       <div class="mole-top"><div class="team-score" id="ts"></div><button class="ear" id="ear">${ic('volume')}再听一次</button><div class="round" id="rd"></div></div>
       <div class="field" id="field"></div><div class="msg" id="msg"></div>`,
     mount(r) {
@@ -483,8 +485,8 @@
         hud(); setTimeout(() => playSyl(...target), 450);
       };
       const start = () => {
-        P = pool(range); round = 0; sc = Array(NT).fill(0); turn = 0; ROUNDS = NT * ({ 2: 5, 3: 4, 4: 3 }[NT] || 4);
-        if (P.length < 4) { holes().innerHTML = ''; $('#msg').textContent = '这一组还没学到哦'; return; }
+        P = pool(range, true); round = 0; sc = Array(NT).fill(0); turn = 0; ROUNDS = NT * ({ 2: 5, 3: 4, 4: 3 }[NT] || 4);
+        if (P.length < 4) { holes().innerHTML = ''; $('#msg').textContent = '这一组还没有老师的录音'; return; }
         ask();
       };
       const end = () => {
@@ -539,10 +541,10 @@
         if (SYL[k]) {
           const drop = B === 'ü' && 'jqx'.includes(A);
           res.innerHTML = `<div class="big py">${show(k)}</div>${drop ? `<p class="note">${ic('eye')} ü 遇到 ${A}，去掉两点：<span class="py">${A}ü → ${show(k)}</span></p>` : ''}
-            <div class="tones">${[1, 2, 3, 4].map((t) => `<button class="tone t${t} ${hasTone(k, t) ? '' : 'dim'}" data-t="${t}"><span class="py">${show(k, t)}</span></button>`).join('')}</div>
+            <div class="tones">${[1, 2, 3, 4].map((t) => `<button class="tone t${t} ${hasTone(k, t) && REC.has(k + t) ? '' : 'dim'}" data-t="${t}"><span class="py">${show(k, t)}</span></button>`).join('')}</div>
             <button class="go ghost" id="card">${ic('photo')}看例词和图片</button>`;
-          res.classList.add('pop'); beep(true); const ft = firstTone(k); if (ft) playSyl(k, ft);
-          res.onclick = (e) => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.t) playSyl(k, +b.dataset.t); if (b.id === 'card') sylCard(k); };
+          res.classList.add('pop'); beep(true); const ft = [1, 2, 3, 4].find((t) => REC.has(k + t)); if (ft) recSyl(k, ft);
+          res.onclick = (e) => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.t) recSyl(k, +b.dataset.t); if (b.id === 'card') sylCard(k); };
         } else if (EXTRA_VALID.includes(k)) {
           res.innerHTML = `<div class="big py">${k}</div><p class="note">能拼，这个音节一般读轻声。</p>`; res.classList.add('pop');
         } else {
@@ -551,8 +553,8 @@
       };
       r.addEventListener('click', (e) => {
         const b = e.target.closest('button'); if (!b || b.closest('#res')) return;
-        if (b.classList.contains('ini')) { A = b.dataset.v; playLetter(A); }
-        else if (b.classList.contains('fin')) { B = b.dataset.v; playLetter(B); }
+        if (b.classList.contains('ini')) { A = b.dataset.v; recLetter(A); }
+        else if (b.classList.contains('fin')) { B = b.dataset.v; recLetter(B); }
         else if (b.id === 'go') return bang();
         else if (b.id === 'rnd') { A = pick(learnedIni); B = pick(FINALS); sync(); return bang(); }
         sync();
@@ -561,7 +563,7 @@
   };
 
   GAMES.listen = {
-    html: () => `${rangeBar(store.get('listenR', 'all'))}${teamBar('listenT', store.get('listenT', 1), true)}<div id="track"></div>
+    html: () => `${rangeBar(store.get('listenR', 'all'), true)}${teamBar('listenT', store.get('listenT', 1), true)}<div id="track"></div>
       <div class="q"><button class="ear" id="ear">${ic('volume')}再听一次</button></div><div class="opts" id="opts"></div><div class="msg" id="msg"></div>
       <p class="muted center">${ic('star')} 这台设备上一共得到 <b id="stars">${store.get('stars', 0)}</b> 颗星星</p>`,
     mount(r) {
@@ -580,8 +582,8 @@
         setTimeout(() => playSyl(...target), 300);
       };
       const start = () => {
-        P = pool(range); N = NT > 1 ? 6 : 8; steps = Array(NT).fill(0); turn = 0; track();
-        if (P.length < 3) { $('#opts').innerHTML = ''; $('#msg').textContent = '这一组还没学到哦'; return; }
+        P = pool(range, true); N = NT > 1 ? 6 : 8; steps = Array(NT).fill(0); turn = 0; track();
+        if (P.length < 3) { $('#opts').innerHTML = ''; $('#msg').textContent = '这一组还没有老师的录音'; return; }
         ask();
       };
       const finish = (i) => {
