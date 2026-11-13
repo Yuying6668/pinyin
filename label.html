@@ -46,9 +46,9 @@ textarea{width:100%;height:9rem;font-family:monospace;font-size:.8rem;border-rad
   录音已经按停顿切成 <b id="n"></b> 段。每一段：<b>① 点 ▶ 听</b> → <b>② 选类型</b>（音节 / 例词 / 不要）→ <b>③ 选音节和声调</b>，如果是例词，<b>直接在右边的输入框里写上你读的词</b>（比如"鸭子嘎嘎"），音节和声调选这个词里要学的那个（比如 gā）。<br>
   开头 14 段是你单独读的字母 <b>a o e i u ü b p m f d t n l</b>（类型是"字母"），后面从 ba 开始。我已经<b>按录音清单的顺序预先填好</b>了每一段，大部分只需要听一下、确认对就行。标了<b>"可能是重读"</b>的段落，是我猜你重读的地方（同一个音读两遍时，网站会用后面那一遍；读错的那遍可以点"不要"）。<br>
   <b>如果从某一段开始整体对不上了：</b>那一段是多出来的（咳嗽、重读），点它的 <b>"⤵ 多一段"</b>，后面的标签会整体往下挪一格；如果是清单里某个音你没读，点 <b>"⤴ 没读这个"</b>，后面的标签会整体往上挪一格。<br>
-  快捷键：<b>空格</b> 播放当前段，<b>↓ / 回车</b> 下一段并播放，<b>1–4</b> 选声调。全部看完后点 <b>"完成，复制结果"</b>，把结果粘贴回聊天里给我。
+  <b>最快的改法：直接在键盘上打拼音和声调</b>，比如打 <b>bi3</b>，当前这一段就变成 bǐ（ü 用 v 打，比如 lv4 = lǜ）。<br>快捷键：<b>空格</b> 播放当前段，<b>↓ / 回车</b> 下一段并播放，<b>1–4</b> 选声调。全部看完后点 <b>"完成，复制结果"</b>，把结果粘贴回聊天里给我。
 </div>
-<div class="bar"><span class="prog" id="prog"></span><button id="playall">▶ 从当前段连续播放</button><button id="stop">■ 停</button>
+<div class="bar"><span class="prog" id="prog"></span><button id="playall">▶ 从当前段连续播放</button><button id="stop">■ 停</button><span id="buf" style="font-family:Andika,sans-serif;font-weight:700;color:var(--terra)"></span>
   <span style="margin-left:auto"></span><button class="pri" id="done">完成，复制结果</button></div>
 <div id="list"></div>
 <div id="outbox" style="display:none"><p class="ok" id="okmsg"></p><textarea id="out" readonly></textarea></div>
@@ -112,8 +112,14 @@ textarea{width:100%;height:9rem;font-family:monospace;font-size:.8rem;border-rad
     if(e.key===' '){e.preventDefault();play(cur);}
     if(e.key==='ArrowDown'||e.key==='Enter'){e.preventDefault();if(cur<rows.length-1)play(cur+1);}
     if(e.key==='ArrowUp'){e.preventDefault();if(cur>0)play(cur-1);}
-    if('1234'.includes(e.key)&&e.key.length===1){rows[cur].tone=+e.key;rows[cur].touched=true;rows[cur].checked=true;save();render();}
+    if(/^[a-z]$/.test(e.key)){buf=(buf+(e.key==='v'?'ü':e.key)).slice(-3);showBuf();return;}
+    if(e.key==='Backspace'){buf=buf.slice(0,-1);showBuf();return;}
+    if('1234'.includes(e.key)&&e.key.length===1){const r=rows[cur];
+      if(buf){if(!SYLS.includes(buf)){showBuf('没有 '+buf);buf='';return;}r.syl=buf;if(r.type==='skip'||r.type==='letter')r.type='syl';}
+      r.tone=+e.key;if(r.type==='word'){const ex=EX[key(r.syl)+r.tone];if(ex)r.word=ex[0];}
+      r.touched=true;r.checked=true;buf='';showBuf();save();render();}
   });
+  let buf='';function showBuf(m){document.getElementById('buf').textContent=m||(buf?('正在输入：'+buf+'  → 按 1–4 选声调'):'');}
   document.getElementById('playall').onclick=()=>{chain=true;play(cur);};
   document.getElementById('stop').onclick=()=>{chain=false;audio.pause();};
   document.getElementById('done').onclick=async()=>{
