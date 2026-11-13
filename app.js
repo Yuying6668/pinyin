@@ -227,7 +227,8 @@
         else rows += `<div class="ch no">${ic('x')}<em>不碰</em></div>`;
       });
     }));
-    const pdf = tab[0] === 'gkhjqx' ? `<a class="pdf" href="res/1107/pinyin-chart-gkhjqx.pdf" target="_blank">${ic('printer')}打印版 PDF</a>` : '';
+    const pdfs = { gkhjqx: 'res/1107/pinyin-chart-gkhjqx.pdf', bpmf: 'res/1114/pinyin-chart-bpmfdtnl.pdf' };
+    const pdf = pdfs[tab[0]] ? `<a class="pdf" href="${pdfs[tab[0]]}" target="_blank">${ic('printer')}打印版 PDF</a>` : '';
     return `<section class="card"><div class="head-row"><h2>拼音表</h2>${pdf}</div>
       <div class="ranges">${CHART_TABS.map((t) => `<a class="rg ${t === tab ? 'sel' : ''}" href="#chart/${t[0]}">${t[1]}</a>`).join('')}</div>
       <p class="muted">点音节：四个声调的例词和图片 · 点声母：看拼音卡片</p>
@@ -579,7 +580,7 @@
   let cleanup = null;
   function route() {
     let [name, sub] = (location.hash.slice(1) || 'home').split('/');
-    if (window.ONLY) { name = window.ONLY; sub = window.ONLY_SUB; }
+    if (window.ONLY) { sub = (name === window.ONLY && sub) ? sub : window.ONLY_SUB; name = window.ONLY; }
     const v = V[name] || V.home;
     if (typeof cleanup === 'function') cleanup(); cleanup = null;
     const main = $('#main'), fresh = main.cloneNode(false); main.replaceWith(fresh);
