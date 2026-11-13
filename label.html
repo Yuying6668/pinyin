@@ -65,7 +65,7 @@ textarea{width:100%;height:9rem;font-family:monospace;font-size:.8rem;border-rad
   let prevS='ga';
   const rows=clips.map(c=>{
     const sv=saved[c.id];
-    if(sv) {prevS=sv.syl;return sv;}
+    if(sv && (sv.checked||sv.touched)) {prevS=sv.syl;return sv;}
     const r={id:c.id,file:c.file,dur:c.dur,type:c.type,syl:unkey(c.syl),tone:c.tone,word:c.word||'',flag:c.flag||'',touched:false,checked:false};
     return r;
   });
