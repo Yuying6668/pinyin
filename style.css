@@ -292,3 +292,6 @@ button.ch.ok:hover{transform:translateY(-2px);border-color:var(--ink)}
   .opt{font-size:2.3rem}.tone{font-size:1.8rem}.tc-h{font-size:2.6rem}
   .field{gap:.5rem;padding:.6rem}.hole{height:8rem}.mole .lbl{font-size:1.6rem}
 }
+
+.tbar{margin:.4rem 0 .8rem;gap:.4rem;align-items:center}.tbar .tn.sel{background:var(--ink);color:#fff}
+#lts{justify-content:center;margin-bottom:.6rem}

@@ -456,20 +456,25 @@
   /* ---------- 拼音游戏 ---------- */
   const GAME_TABS = [['mole', ic('target-arrow') + '打地鼠'], ['peng', ic('puzzle') + '碰一碰'], ['listen', ic('ear') + '听音找飞机']];
   const GAMES = {};
+  const teamBar = (key, cur, solo) => `<div class="row tbar">比赛队伍 ${(solo ? [1, 2, 3, 4] : [2, 3, 4]).map((n) =>
+    `<button class="go ghost tn ${n === cur ? 'sel' : ''}" data-teams="${n}">${n === 1 ? '个人' : n + ' 队'}</button>`).join('')}</div>`;
+  const scoreBoard = (n, sc, turn) => TEAMS.slice(0, n).map((t, i) => `<span class="tsc ${turn === i ? 'on' : ''}" style="--c:${t[1]}">${t[0]} <b>${sc[i]}</b></span>`).join('');
+  const winner = (n, sc) => { const m = Math.max(...sc), w = TEAMS.slice(0, n).filter((_, i) => sc[i] === m).map((t) => t[0]);
+    return w.length === n ? '平局！每个队都很棒 🎉' : w.length > 1 ? `${w.join('、')}并列第一！🏆` : `${w[0]}赢啦！🏆`; };
 
   GAMES.mole = {
-    html: () => `${rangeBar(store.get('moleR', 'all'))}
+    html: () => `${rangeBar(store.get('moleR', 'all'))}${teamBar('moleT', store.get('moleT', 2))}
       <div class="mole-top"><div class="team-score" id="ts"></div><button class="ear" id="ear">${ic('volume')}再听一次</button><div class="round" id="rd"></div></div>
       <div class="field" id="field"></div><div class="msg" id="msg"></div>`,
     mount(r) {
-      const ROUNDS = 10; let range = store.get('moleR', 'all'), P, round, sc, turn, target, tries, lock;
+      let ROUNDS = 10, NT = store.get('moleT', 2), range = store.get('moleR', 'all'), P, round, sc, turn, target, tries, lock;
       const holes = () => $('#field');
       const hud = () => {
-        $('#ts').innerHTML = [0, 1].map((i) => `<span class="tsc ${turn === i ? 'on' : ''}" style="--c:${[TEAMS[0][1], TEAMS[2][1]][i]}">${['红队', '蓝队'][i]} <b>${sc[i]}</b></span>`).join('');
+        $('#ts').innerHTML = scoreBoard(NT, sc, turn);
         $('#rd').textContent = `第 ${Math.min(round + 1, ROUNDS)} / ${ROUNDS} 轮`;
       };
       const ask = () => {
-        tries = 0; lock = false; $('#msg').textContent = `${['红队', '蓝队'][turn]}，仔细听！`;
+        tries = 0; lock = false; $('#msg').textContent = `${TEAMS[turn][0]}，仔细听！`;
         target = pick(P);
         const others = shuffle(P.filter(([k]) => k !== target[0])), opts = [target];
         others.forEach((o) => { if (opts.length < 4 && !opts.some(([k]) => k === o[0])) opts.push(o); });
@@ -479,29 +484,30 @@
         hud(); setTimeout(() => playSyl(...target), 450);
       };
       const start = () => {
-        P = pool(range); round = 0; sc = [0, 0]; turn = 0;
+        P = pool(range); round = 0; sc = Array(NT).fill(0); turn = 0; ROUNDS = NT * ({ 2: 5, 3: 4, 4: 3 }[NT] || 4);
         if (P.length < 4) { holes().innerHTML = ''; $('#msg').textContent = '这一组还没学到哦'; return; }
         ask();
       };
       const end = () => {
-        const w = sc[0] === sc[1] ? '平局！两队都很棒 🎉' : `${sc[0] > sc[1] ? '红队' : '蓝队'}赢啦！🏆`;
+        const w = winner(NT, sc);
         holes().innerHTML = `<div class="win">${w}<br><button class="go" id="again">再玩一次</button></div>`; $('#msg').textContent = ''; beep(true);
       };
       r.addEventListener('click', (e) => {
         const b = e.target.closest('button'); if (!b) return;
         if (b.dataset.range) { range = b.dataset.range; store.set('moleR', range); $$('.rg', r).forEach((x) => x.classList.toggle('sel', x === b)); return start(); }
+        if (b.dataset.teams) { NT = +b.dataset.teams; store.set('moleT', NT); $$('[data-teams]', r).forEach((x) => x.classList.toggle('sel', x === b)); return start(); }
         if (b.id === 'ear' && target) return playSyl(...target);
         if (b.id === 'again') return start();
         if (b.classList.contains('mole') && !lock) {
           if (b.dataset.k === target[0] && +b.dataset.t === target[1]) {
             lock = true; b.classList.add('hit'); beep(true); sc[turn]++; $('#msg').textContent = '打中啦！⭐';
-            round++; turn = 1 - turn; hud();
+            round++; turn = (turn + 1) % NT; hud();
             setTimeout(() => (round >= ROUNDS ? end() : ask()), 1100);
           } else {
             tries++; b.classList.add('miss'); beep(false);
             if (tries >= 2) {
               lock = true; $$('.mole', r).forEach((m) => { if (m.dataset.k === target[0]) m.classList.add('hit'); });
-              $('#msg').textContent = `是 ${show(...target)}，换另一队！`; round++; turn = 1 - turn; hud();
+              $('#msg').textContent = `是 ${show(...target)}，换下一队！`; round++; turn = (turn + 1) % NT; hud();
               setTimeout(() => (round >= ROUNDS ? end() : ask()), 1800);
             } else { $('#msg').textContent = '不对哦，再听一次 👂'; setTimeout(() => playSyl(...target), 350); }
           }
@@ -556,32 +562,35 @@
   };
 
   GAMES.listen = {
-    html: () => `${rangeBar(store.get('listenR', 'all'))}<div class="track" id="track"></div>
+    html: () => `${rangeBar(store.get('listenR', 'all'))}${teamBar('listenT', store.get('listenT', 1), true)}<div class="team-score" id="lts"></div><div class="track" id="track"></div>
       <div class="q"><button class="ear" id="ear">${ic('volume')}再听一次</button></div><div class="opts" id="opts"></div><div class="msg" id="msg"></div>
       <p class="muted center">${ic('star')} 这台设备上一共得到 <b id="stars">${store.get('stars', 0)}</b> 颗星星</p>`,
     mount(r) {
-      const N = 8; let range = store.get('listenR', 'all'), P = [], step = 0, target = null, tries = 0;
+      let NT = store.get('listenT', 1), N = 8, range = store.get('listenR', 'all'), P = [], step = 0, target = null, tries = 0, sc = [], turn = 0;
+      const lhud = () => { $('#lts').innerHTML = NT > 1 ? scoreBoard(NT, sc, turn) : ''; };
       const track = () => { $('#track').innerHTML = Array.from({ length: N + 1 }, (_, i) => `<span class="cell ${i < step ? 'done' : ''} ${i === N ? 'goal' : ''}">${i === step ? plane : i === N ? '🏁' : ''}</span>`).join(''); };
       const ask = () => {
-        tries = 0; $('#msg').textContent = ''; target = pick(P);
+        tries = 0; $('#msg').textContent = NT > 1 ? `${TEAMS[turn][0]}，仔细听！` : ''; lhud(); target = pick(P);
         const others = shuffle(P.filter(([k]) => k !== target[0]));
         const near = others.filter(([k]) => iniOf(k) === iniOf(target[0]) || finOf(k) === finOf(target[0]));
         const opts = [target]; [...near, ...others].forEach((o) => { if (opts.length < 3 && !opts.some(([k]) => k === o[0])) opts.push(o); });
         $('#opts').innerHTML = shuffle(opts).map(([k, t]) => `<button class="opt py" data-k="${k}" data-t="${t}">${show(k, t)}</button>`).join('');
         setTimeout(() => playSyl(...target), 300);
       };
-      const start = () => { P = pool(range); step = 0; track(); if (P.length < 3) { $('#opts').innerHTML = ''; $('#msg').textContent = '这一组还没学到哦'; return; } ask(); };
+      const start = () => { P = pool(range); step = 0; sc = Array(NT).fill(0); turn = 0; N = NT > 1 ? NT * 4 : 8; lhud(); track(); if (P.length < 3) { $('#opts').innerHTML = ''; $('#msg').textContent = '这一组还没学到哦'; return; } ask(); };
       r.addEventListener('click', (e) => {
         const b = e.target.closest('button'); if (!b) return;
         if (b.dataset.range) { range = b.dataset.range; store.set('listenR', range); $$('.rg', r).forEach((x) => x.classList.toggle('sel', x === b)); return start(); }
+        if (b.dataset.teams) { NT = +b.dataset.teams; store.set('listenT', NT); $$('[data-teams]', r).forEach((x) => x.classList.toggle('sel', x === b)); return start(); }
         if (b.id === 'ear' && target) return playSyl(...target);
         if (b.id === 'again') return start();
         if (!b.classList.contains('opt')) return;
         if (b.dataset.k === target[0] && +b.dataset.t === target[1]) {
           b.classList.add('right'); beep(true); step++;
-          if (tries === 0) { const s = store.get('stars', 0) + 1; store.set('stars', s); $('#stars').textContent = s; }
-          track();
-          if (step >= N) { $('#opts').innerHTML = '<div class="win">🏁 飞到终点啦！<br><button class="go" id="again">再飞一次</button></div>'; }
+          if (tries === 0) { const s = store.get('stars', 0) + 1; store.set('stars', s); $('#stars').textContent = s; if (NT > 1) sc[turn]++; }
+          if (NT > 1) turn = (turn + 1) % NT;
+          track(); lhud();
+          if (step >= N) { $('#opts').innerHTML = `<div class="win">🏁 飞到终点啦！${NT > 1 ? '<br>' + winner(NT, sc) : ''}<br><button class="go" id="again">再飞一次</button></div>`; $('#msg').textContent = ''; }
           else setTimeout(ask, 900);
         } else {
           tries++; b.classList.add('wrong'); beep(false);
