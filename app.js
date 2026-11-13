@@ -561,40 +561,57 @@
   };
 
   GAMES.listen = {
-    html: () => `${rangeBar(store.get('listenR', 'all'))}${teamBar('listenT', store.get('listenT', 1), true)}<div class="team-score" id="lts"></div><div class="track" id="track"></div>
+    html: () => `${rangeBar(store.get('listenR', 'all'))}${teamBar('listenT', store.get('listenT', 1), true)}<div id="track"></div>
       <div class="q"><button class="ear" id="ear">${ic('volume')}再听一次</button></div><div class="opts" id="opts"></div><div class="msg" id="msg"></div>
       <p class="muted center">${ic('star')} 这台设备上一共得到 <b id="stars">${store.get('stars', 0)}</b> 颗星星</p>`,
     mount(r) {
-      let NT = store.get('listenT', 1), N = 8, range = store.get('listenR', 'all'), P = [], step = 0, target = null, tries = 0, sc = [], turn = 0;
-      const lhud = () => { $('#lts').innerHTML = NT > 1 ? scoreBoard(NT, sc, turn) : ''; };
-      const track = () => { $('#track').innerHTML = Array.from({ length: N + 1 }, (_, i) => `<span class="cell ${i < step ? 'done' : ''} ${i === N ? 'goal' : ''}">${i === step ? plane : i === N ? '🏁' : ''}</span>`).join(''); };
+      // 个人：一架飞机飞 8 格；分队：每队一条航线、一架飞机，第一次就听对才前进 1 格，先到终点的队赢
+      let NT = store.get('listenT', 1), N = 8, range = store.get('listenR', 'all'), P = [], steps = [0], target = null, tries = 0, turn = 0, busy = false;
+      const lane = (i) => `<div class="track ${NT > 1 ? 'lane' : ''} ${NT > 1 && turn === i ? 'on' : ''}" style="--c:${TEAMS[i][1]};grid-template-columns:${NT > 1 ? '5.5rem ' : ''}repeat(${N + 1},1fr)">
+        ${NT > 1 ? `<span class="lname">${TEAMS[i][0]}</span>` : ''}${Array.from({ length: N + 1 }, (_, c) =>
+          `<span class="cell ${c < steps[i] ? 'done' : ''} ${c === N ? 'goal' : ''}">${c === steps[i] ? plane : c === N ? '🏁' : ''}</span>`).join('')}</div>`;
+      const track = () => { $('#track').innerHTML = steps.map((_, i) => lane(i)).join(''); };
       const ask = () => {
-        tries = 0; $('#msg').textContent = NT > 1 ? `${TEAMS[turn][0]}，仔细听！` : ''; lhud(); target = pick(P);
+        tries = 0; busy = false; $('#msg').textContent = NT > 1 ? `${TEAMS[turn][0]}，仔细听！` : ''; track(); target = pick(P);
         const others = shuffle(P.filter(([k]) => k !== target[0]));
         const near = others.filter(([k]) => iniOf(k) === iniOf(target[0]) || finOf(k) === finOf(target[0]));
         const opts = [target]; [...near, ...others].forEach((o) => { if (opts.length < 3 && !opts.some(([k]) => k === o[0])) opts.push(o); });
         $('#opts').innerHTML = shuffle(opts).map(([k, t]) => `<button class="opt py" data-k="${k}" data-t="${t}">${show(k, t)}</button>`).join('');
         setTimeout(() => playSyl(...target), 300);
       };
-      const start = () => { P = pool(range); step = 0; sc = Array(NT).fill(0); turn = 0; N = NT > 1 ? NT * 4 : 8; lhud(); track(); if (P.length < 3) { $('#opts').innerHTML = ''; $('#msg').textContent = '这一组还没学到哦'; return; } ask(); };
+      const start = () => {
+        P = pool(range); N = NT > 1 ? 6 : 8; steps = Array(NT).fill(0); turn = 0; track();
+        if (P.length < 3) { $('#opts').innerHTML = ''; $('#msg').textContent = '这一组还没学到哦'; return; }
+        ask();
+      };
+      const finish = (i) => {
+        $('#opts').innerHTML = `<div class="win">🏁 ${NT > 1 ? `${TEAMS[i][0]}先飞到终点，赢啦！🏆` : '飞到终点啦！'}<br><button class="go" id="again">再飞一次</button></div>`;
+        $('#msg').textContent = ''; beep(true);
+      };
+      const next = () => { if (NT > 1) turn = (turn + 1) % NT; ask(); };
       r.addEventListener('click', (e) => {
         const b = e.target.closest('button'); if (!b) return;
         if (b.dataset.range) { range = b.dataset.range; store.set('listenR', range); $$('.rg', r).forEach((x) => x.classList.toggle('sel', x === b)); return start(); }
         if (b.dataset.teams) { NT = +b.dataset.teams; store.set('listenT', NT); $$('[data-teams]', r).forEach((x) => x.classList.toggle('sel', x === b)); return start(); }
         if (b.id === 'ear' && target) return playSyl(...target);
         if (b.id === 'again') return start();
-        if (!b.classList.contains('opt')) return;
+        if (!b.classList.contains('opt') || busy) return;
         if (b.dataset.k === target[0] && +b.dataset.t === target[1]) {
-          b.classList.add('right'); beep(true); step++;
-          if (tries === 0) { const s = store.get('stars', 0) + 1; store.set('stars', s); $('#stars').textContent = s; if (NT > 1) sc[turn]++; }
-          if (NT > 1) turn = (turn + 1) % NT;
-          track(); lhud();
-          if (step >= N) { $('#opts').innerHTML = `<div class="win">🏁 飞到终点啦！${NT > 1 ? '<br>' + winner(NT, sc) : ''}<br><button class="go" id="again">再飞一次</button></div>`; $('#msg').textContent = ''; }
-          else setTimeout(ask, 900);
+          b.classList.add('right'); beep(true); busy = true;
+          const move = NT === 1 || tries === 0;
+          if (tries === 0) { const s = store.get('stars', 0) + 1; store.set('stars', s); $('#stars').textContent = s; }
+          if (move) steps[turn]++;
+          if (NT > 1) $('#msg').textContent = move ? `${TEAMS[turn][0]}前进一格！✈️` : '答对啦，但这次不前进';
+          track();
+          if (steps[turn] >= N) return finish(turn);
+          setTimeout(next, 1000);
         } else {
           tries++; b.classList.add('wrong'); beep(false);
-          $('#msg').textContent = tries >= 2 ? `是 ${show(...target)}，听一听` : '再听一次，仔细听 👂';
-          if (tries >= 2) $$('.opt', r).forEach((o) => { if (o.dataset.k === target[0]) o.classList.add('right'); });
+          if (tries >= 2) {
+            $$('.opt', r).forEach((o) => { if (o.dataset.k === target[0] && +o.dataset.t === target[1]) o.classList.add('right'); });
+            if (NT > 1) { busy = true; $('#msg').textContent = `是 ${show(...target)}，换下一队！`; setTimeout(() => playSyl(...target), 400); return setTimeout(next, 2200); }
+            $('#msg').textContent = `是 ${show(...target)}，听一听`;
+          } else $('#msg').textContent = '再听一次，仔细听 👂';
           setTimeout(() => playSyl(...target), 400);
         }
       });

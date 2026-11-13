@@ -294,4 +294,7 @@ button.ch.ok:hover{transform:translateY(-2px);border-color:var(--ink)}
 }
 
 .tbar{margin:.4rem 0 .8rem;gap:.4rem;align-items:center}.tbar .tn.sel{background:var(--ink);color:#fff}
-#lts{justify-content:center;margin-bottom:.6rem}
+.track.lane{margin-bottom:.5rem;padding:.3rem;border-radius:14px;border:2px solid transparent}
+.track.lane.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 10%,transparent)}
+.lname{display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--c);font-size:1.1rem}
+.track.lane .cell.done{background:color-mix(in srgb,var(--c) 22%,transparent)}
