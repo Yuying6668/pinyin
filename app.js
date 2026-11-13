@@ -280,11 +280,57 @@
     },
   };
 
+  /* 分组规则（写在名字后面，用空格隔开）：男 / 女；"蓝队"等 = 固定在这个队；"分开" = 带这个标记的人各自在不同的队 */
+  const parsePerson = (line) => {
+    const p = { name: [], g: '', pin: '', sep: false };
+    line.split(/\s+/).forEach((t) => {
+      if (/^(男|boy|m|dreng)$/i.test(t)) p.g = '男';
+      else if (/^(女|girl|f|pige)$/i.test(t)) p.g = '女';
+      else if (t === '分开') p.sep = true;
+      else if (TEAMS.some((x) => x[0] === t)) p.pin = t;
+      else p.name.push(t);
+    });
+    p.name = p.name.join(' ');
+    return p;
+  };
+  const makeGroups = (people, n) => {
+    const g = Array.from({ length: n }, () => []), cap = Math.ceil(people.length / n);
+    const notes = [];
+    const cnt = (m, gd) => m.filter((x) => x.g === gd).length;
+    const place = (p, i) => g[i].push(p);
+    // 1. 固定队伍
+    people.filter((p) => p.pin).forEach((p) => {
+      let i = TEAMS.slice(0, n).findIndex((t) => t[0] === p.pin);
+      if (i < 0) { i = Math.min(n - 1, 1); notes.push(`现在只有 ${n} 组，没有${p.pin}，${p.name} 放在${TEAMS[i][0]}`); }
+      place(p, i);
+    });
+    // 2. 必须分开的人：各自去不同的队
+    const sep = shuffle(people.filter((p) => p.sep && !p.pin));
+    if (sep.length > n) notes.push(`标了“分开”的有 ${sep.length} 人，但只有 ${n} 组，有人只能同组`);
+    let order = shuffle([...Array(n).keys()]);
+    sep.forEach((p, k) => {
+      if (k % n === 0 && k) order = shuffle([...Array(n).keys()]);
+      const taken = new Set(people.filter((q) => q.sep).map((q) => g.findIndex((m) => m.includes(q))).filter((i) => i >= 0));
+      const free = order.filter((i) => !taken.has(i) && g[i].length < cap);
+      place(p, (free.length ? free : order.filter((i) => g[i].length < cap))[0] ?? order[0]);
+    });
+    // 3. 其他人：男生、女生分别轮流放进同性别最少、人数最少的队
+    const rest = people.filter((p) => !p.pin && !p.sep);
+    ['男', '女', ''].forEach((gd) => shuffle(rest.filter((p) => p.g === gd)).forEach((p) => {
+      const open = [...Array(n).keys()].filter((i) => g[i].length < cap);
+      const pool = open.length ? open : [...Array(n).keys()];
+      const best = shuffle(pool).sort((x, y) => (cnt(g[x], gd) - cnt(g[y], gd)) || (g[x].length - g[y].length))[0];
+      place(p, best);
+    }));
+    return { g, notes };
+  };
+
   TOOLS.group = {
-    html: () => `<div class="grp-in"><label>名字（每行一个，只保存在这台电脑上，不会上传）<textarea id="names" rows="6" placeholder="不写名字也可以：用下面的人数，按号码分组"></textarea></label>
+    html: () => `<div class="grp-in"><label>名字（每行一个，只保存在这台电脑上，不会上传）<textarea id="names" rows="8" placeholder="不写名字也可以：用下面的人数，按号码分组\n可以在名字后面加规则，例如：\nEthel 女 蓝队\nWilliam 男 分开\nAnna 女"></textarea></label>
+      <p class="muted" style="margin:.3rem 0 .6rem">规则写在名字后面：<b>男 / 女</b>（每队男女尽量一样多）· <b>蓝队</b>（固定在蓝队，红队/黄队/绿队同理）· <b>分开</b>（标了“分开”的人各在不同的队）</p>
       <div class="row">人数 <input id="cnt" type="number" min="2" max="40" value="12"> 分成
       <button class="go ghost gn" data-n="2">2 组</button><button class="go ghost gn sel" data-n="3">3 组</button><button class="go ghost gn" data-n="4">4 组</button>
-      <button class="go" id="mix">${ic('arrows-shuffle')}随机分组</button></div></div><div class="groups" id="groups"></div>`,
+      <button class="go" id="mix">${ic('arrows-shuffle')}随机分组</button></div></div><div class="groups" id="groups"></div><p class="muted" id="gnote"></p>`,
     mount(r) {
       let n = 3; $('#names').value = store.get('names', '');
       r.addEventListener('click', (e) => {
@@ -292,10 +338,11 @@
         if (b.dataset.n) { n = +b.dataset.n; $$('.gn', r).forEach((x) => x.classList.toggle('sel', x === b)); }
         if (b.id === 'mix') {
           const raw = $('#names').value; store.set('names', raw);
-          let people = raw.split('\n').map((s) => s.trim()).filter(Boolean);
-          if (!people.length) people = Array.from({ length: Math.max(2, +$('#cnt').value || 12) }, (_, i) => `${i + 1} 号`);
-          const g = Array.from({ length: n }, () => []); shuffle(people).forEach((p, i) => g[i % n].push(p));
-          $('#groups').innerHTML = g.map((m, i) => `<div class="gcard pop" style="--c:${TEAMS[i][1]}"><h3>${TEAMS[i][0]}</h3>${m.map((x) => `<div>${esc(x)}</div>`).join('')}</div>`).join('');
+          let people = raw.split('\n').map((s) => s.trim()).filter(Boolean).map(parsePerson).filter((p) => p.name);
+          if (!people.length) people = Array.from({ length: Math.max(2, +$('#cnt').value || 12) }, (_, i) => ({ name: `${i + 1} 号`, g: '', pin: '', sep: false }));
+          const { g, notes } = makeGroups(people, n);
+          $('#groups').innerHTML = g.map((m, i) => `<div class="gcard pop" style="--c:${TEAMS[i][1]}"><h3>${TEAMS[i][0]}</h3>${shuffle(m).map((x) => `<div>${esc(x.name)}</div>`).join('')}</div>`).join('');
+          $('#gnote').textContent = notes.join('；');
           beep(true);
         }
       });
