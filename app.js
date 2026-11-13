@@ -326,8 +326,7 @@
   };
 
   TOOLS.group = {
-    html: () => `<div class="grp-in"><label>名字（每行一个，只保存在这台电脑上，不会上传）<textarea id="names" rows="8" placeholder="不写名字也可以：用下面的人数，按号码分组\n可以在名字后面加规则，例如：\nEthel 女 蓝队\nWilliam 男 分开\nAnna 女"></textarea></label>
-      <p class="muted" style="margin:.3rem 0 .6rem">规则写在名字后面：<b>男 / 女</b>（每队男女尽量一样多）· <b>蓝队</b>（固定在蓝队，红队/黄队/绿队同理）· <b>分开</b>（标了“分开”的人各在不同的队）</p>
+    html: () => `<div class="grp-in"><label>名字（每行一个，只保存在这台电脑上，不会上传）<textarea id="names" rows="8" placeholder="不写名字也可以：用下面的人数，按号码分组"></textarea></label>
       <div class="row">人数 <input id="cnt" type="number" min="2" max="40" value="12"> 分成
       <button class="go ghost gn" data-n="2">2 组</button><button class="go ghost gn sel" data-n="3">3 组</button><button class="go ghost gn" data-n="4">4 组</button>
       <button class="go" id="mix">${ic('arrows-shuffle')}随机分组</button></div></div><div class="groups" id="groups"></div><p class="muted" id="gnote"></p>`,
