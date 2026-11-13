@@ -104,7 +104,7 @@
     '😢': 'Crying face', '🥒': 'Cucumber', '👖': 'Jeans', '😆': 'Grinning squinting face', '🪷': 'Lotus', '🦊': 'Fox',
     '🐯': 'Tiger face', '🍊': 'Tangerine', '🙋': 'Person raising hand*', '7️⃣': 'Keycap 7', '🚲': 'Bicycle', '🛏️': 'Bed',
     '🧼': 'Soap', '🎈': 'Balloon', '🍉': 'Watermelon', '🤫': 'Shushing face', '🐹': 'Hamster', '🧑‍🏫': 'Teacher*',
-    '🎮': 'Video game', '🍝': 'Spaghetti', '🧣': 'Scarf', '📝': 'Memo', '🤸': 'Person cartwheeling*', '💪': 'Flexed biceps*', '🏡': 'House with garden', '🏁': 'Chequered flag', '⭐': 'Star',
+    '🎮': 'Video game', '🐝': 'Honeybee', '🍝': 'Spaghetti', '🧣': 'Scarf', '📝': 'Memo', '🤸': 'Person cartwheeling*', '💪': 'Flexed biceps*', '🏡': 'House with garden', '🏁': 'Chequered flag', '⭐': 'Star',
   };
   const FLBASE = 'https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/';
   function flUrl(e) {

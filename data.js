@@ -130,7 +130,7 @@ window.EX = {
   pu1: ['扑蝴蝶', '🦋', 'catch a butterfly'], pu2: ['葡萄', '🍇', 'grapes'], pu4: ['瀑布', '🏞️', 'waterfall'],
   ma1: ['妈妈', '👩', 'mum'], ma2: ['麻花', '🥨', 'twisted dough'], ma3: ['小马', '🐴', 'pony'],
   mo1: ['摸一摸', '🤚', 'touch'], mo2: ['蘑菇', '🍄', 'mushroom'], mo4: ['墨水', '🖋️', 'ink'],
-  mi1: ['眯眼睛', '😑', 'squint'], mi2: ['迷路', '🧭', 'get lost'], mi3: ['米饭', '🍚', 'rice'], mi4: ['蜂蜜', '🍯', 'honey'],
+  mi1: ['眯眼睛', '😑', 'squint'], mi2: ['迷路', '🧭', 'get lost'], mi3: ['米饭', '🍚', 'rice'], mi4: ['蜜蜂', '🐝', 'bee'],
   mu3: ['母鸡', '🐔', 'hen'], mu4: ['木头', '🪵', 'wood'],
   fa1: ['沙发', '🛋️', 'sofa'], fu2: ['福字', '🧧', '"fu" (luck) sign'], fu3: ['斧头', '🪓', 'axe'], fu4: ['复习', '📝', 'review'],
   da1: ['搭积木', '🧱', 'build blocks'], da3: ['打鼓', '🥁', 'play the drum'], da4: ['大象', '🐘', 'elephant'],
