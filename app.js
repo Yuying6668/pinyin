@@ -11,12 +11,16 @@
   /* ================= 拼音工具 ================= */
   const MARKS = { a: 'āáǎà', o: 'ōóǒò', e: 'ēéěè', i: 'īíǐì', u: 'ūúǔù', 'ü': 'ǖǘǚǜ' };
   const INITIALS = INITIAL_GROUPS.flat();
-  const iniOf = (k) => (INITIALS.includes(k[0]) ? k[0] : '');
+  /* 先认两个字母的声母 zh ch sh，再认一个字母的 */
+  const iniOf = (k) => (INITIALS.includes(k.slice(0, 2)) ? k.slice(0, 2) : INITIALS.includes(k[0]) ? k[0] : '');
+  const isIn = (i, list) => !!i && list.includes(i);
+  const JQX = ['j', 'q', 'x'], NL = ['n', 'l'], GKH = ['g', 'k', 'h'], ZCSR = ['zh', 'ch', 'sh', 'r'];
+  const GROUP_NAME = (g) => g.join(' ');
   const finOf = (k) => { const f = k.slice(iniOf(k).length); return f === 'v' ? 'ü' : f; };
   const keyOf = (i, f) => i + (f === 'ü' ? 'v' : f);
   function show(k, t) {
     const i = iniOf(k); let f = finOf(k);
-    if (f === 'ü' && 'jqx'.includes(i)) f = 'u';
+    if (f === 'ü' && isIn(i, JQX)) f = 'u';
     if (t) f = MARKS[f][t - 1];
     return i + f;
   }
@@ -24,7 +28,9 @@
   const firstTone = (k) => [1, 2, 3, 4].find((t) => hasTone(k, t));
 
   /* ================= 进度 ================= */
-  const today = new Date().toISOString().slice(0, 10);
+  /* 预览以后的进度：网址后面加 ?today=2026-11-28 */
+  const qDay = new URLSearchParams(location.search).get('today');
+  const today = /^\d{4}-\d{2}-\d{2}$/.test(qDay || '') ? qDay : new Date().toISOString().slice(0, 10);
   const learned = new Set(WEEKS.filter((w) => w.date <= today).flatMap((w) => w.learn));
   const learnedIni = INITIALS.filter((i) => learned.has(i));
   const nextWeek = WEEKS.find((w) => w.date >= today) || WEEKS[WEEKS.length - 1];
@@ -35,8 +41,14 @@
     { id: 'fin', name: '单韵母 a o e i u ü', inis: [''] },
     { id: 'bpmf', name: 'b p m f d t n l', inis: ['b', 'p', 'm', 'f', 'd', 't', 'n', 'l'] },
     { id: 'gkhjqx', name: 'g k h j q x', inis: ['g', 'k', 'h', 'j', 'q', 'x'] },
+    { id: 'zhchshr', name: 'zh ch sh r', inis: ZCSR },
   ].map((r) => ({ ...r, inis: r.inis.filter((i) => i === '' || learned.has(i)) })).filter((r) => r.inis.length);
+  /* “比一比”：一对一对的易混音节，两个都学过、都有老师录音才出现 */
+  const pairPool = () => (window.PAIRS || []).filter((pr) => pr.every((x) => learned.has(iniOf(x)) && REC.has(x)))
+    .map((pr) => pr.map((x) => [x.slice(0, -1), +x.slice(-1)]));
+  const PAIR_RANGE = { id: 'pair', name: '比一比 zh/j ch/q sh/x r/l' };
   function pool(rangeId, recOnly) {
+    if (rangeId === 'pair') return pairPool().flat();
     const r = RANGES.find((x) => x.id === rangeId) || RANGES[0], out = [];
     Object.keys(SYL).forEach((k) => {
       if (!r.inis.includes(iniOf(k))) return;
@@ -45,7 +57,7 @@
     });
     return out;
   }
-  const rangeBar = (cur, recOnly) => `<div class="ranges">${RANGES.filter((r) => !recOnly || pool(r.id, true).length >= 4).map((r) =>
+  const rangeBar = (cur, recOnly, withPair) => `<div class="ranges">${[...RANGES, ...(withPair && learned.has('zh') ? [PAIR_RANGE] : [])].filter((r) => !recOnly || pool(r.id, true).length >= 4).map((r) =>
     `<button class="rg ${r.id === cur ? 'sel' : ''}" data-range="${r.id}">${r.name}</button>`).join('')}</div>`;
 
   const store = {
@@ -107,6 +119,10 @@
     '🐯': 'Tiger face', '🍊': 'Tangerine', '🙋': 'Person raising hand*', '7️⃣': 'Keycap 7', '🚲': 'Bicycle', '🛏️': 'Bed',
     '🧼': 'Soap', '🎈': 'Balloon', '🍉': 'Watermelon', '🤫': 'Shushing face', '🐹': 'Hamster', '🧑‍🏫': 'Teacher*',
     '🎮': 'Video game', '🐝': 'Honeybee', '🍝': 'Spaghetti', '🧣': 'Scarf', '📝': 'Memo', '🤸': 'Person cartwheeling*', '💪': 'Flexed biceps*', '🏡': 'House with garden', '🏁': 'Chequered flag', '⭐': 'Star',
+    '🎀': 'Ribbon', '🍗': 'Poultry leg', '😉': 'Winking face', '👉': 'Backhand index pointing right*', '🎋': 'Tanabata tree', '🍲': 'Pot of food',
+    '🕷️': 'Spider', '📄': 'Page facing up', '🍴': 'Fork and knife', '🍵': 'Teacup without handle', '🚗': 'Automobile', '🚪': 'Door',
+    '🍳': 'Cooking', '📏': 'Straight ruler', '🪽': 'Wing', '🏖️': 'Beach with umbrella', '🤪': 'Zany face', '🐍': 'Snake', '🐭': 'Mouse face',
+    '🌳': 'Deciduous tree', '🦁': 'Lion', '🔟': 'Keycap 10', '✅': 'Check mark button', '☀️': 'Sun', '🌅': 'Sunrise', '🍎': 'Red apple',
   };
   const FLBASE = 'https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/';
   function flUrl(e) {
@@ -126,7 +142,7 @@
     const sh = $('#sheet'), f = x === 'ü' ? 'v' : x;
     sh.innerHTML = `<div class="sheet-card letter"><button class="x" aria-label="关闭">${ic('x')}</button>
       <img src="img/letters/${f}.jpg" alt="${x}" onerror="this.outerHTML='<div class=lbig>${x}</div>'">
-      ${LETTER[x] ? `<div class="mn">${LETTER[x][1]}</div>` : ''}
+      ${LETTER[x] ? `<div class="mn">${LETTER[x][1]}</div>` : ''}${LETTER[x] && LETTER[x][2] ? `<div class="act">${ic('hand-finger')} 动作：${LETTER[x][2]}</div>` : ''}
       <button class="go" data-say>${ic('volume')}读一读 · Lyt</button></div>`;
     sh.classList.add('on');
     sh.onclick = (e) => {
@@ -149,8 +165,9 @@
     }).join('');
     const split = i ? `<div class="split py"><button data-l="${i}">${i}</button><span>+</span><button data-l="${f}">${f}</button><span>→</span><b>${show(k)}</b></div>`
       : `<div class="split py"><b>${show(k)}</b></div>`;
-    const note = f === 'ü' && 'jqx'.includes(i) ? `<p class="note">${ic('eye')} 小 ü 见了 j q x，去掉两点还读 ü</p>`
-      : f === 'ü' && 'nl'.includes(i) ? `<p class="note">${ic('diamond')} 小 ü 见了 n l，两点不能丢</p>` : '';
+    const note = f === 'ü' && isIn(i, JQX) ? `<p class="note">${ic('eye')} 小 ü 见了 j q x，去掉两点还读 ü</p>`
+      : f === 'ü' && isIn(i, NL) ? `<p class="note">${ic('diamond')} 小 ü 见了 n l，两点不能丢</p>`
+      : f === 'i' && isIn(i, ZCSR) ? `<p class="note">${ic('sparkles')} ${show(k)} 要整个读，i 不读成“衣”</p>` : '';
     const sh = $('#sheet');
     sh.innerHTML = `<div class="sheet-card"><button class="x" aria-label="关闭">${ic('x')}</button>${split}${note}<div class="tcs">${tones}</div>
       <p class="hint">点一张卡片听读音 · Tryk og lyt</p></div>`;
@@ -172,7 +189,7 @@
   /* ---------- 首页 ---------- */
   V.home = () => {
     const last = [...WEEKS].reverse().find((w) => w.date <= today && w.learn.length);
-    const grp = [['单韵母', FINALS], ['b p m f', INITIAL_GROUPS[0]], ['d t n l', INITIAL_GROUPS[1]], ['g k h', INITIAL_GROUPS[2]], ['j q x', INITIAL_GROUPS[3]]];
+    const grp = [['单韵母', FINALS], ...INITIAL_GROUPS.map((g) => [GROUP_NAME(g), g])];
     let st = '';
     grp.forEach(([name, ls]) => {
       const got = ls.filter((x) => learned.has(x)); if (!got.length) return;
@@ -200,7 +217,7 @@
       <a class="zone z1" href="#tools"><div class="art">${fl('🧑‍🏫')}</div><div class="who">老师 · LÆRER</div><h3>课堂</h3><p>投影用的大字闪卡、分组和计时工具。</p>
         <ul><li>${ic('cards')}闪卡</li><li>${ic('users-group')}随机分组 · 小组积分</li><li>${ic('chart-donut-3')}拼音转盘 · 倒计时</li></ul><span class="more">进入课堂 ${ic('arrow-right')}</span></a>
       <a class="zone z2" href="#games"><div class="art">${fl('🎮')}</div><div class="who">小朋友 · BØRN</div><h3>游戏</h3><p>听一听、拼一拼，在游戏里练拼读。</p>
-        <ul><li>${ic('target-arrow')}拼音打地鼠</li><li>${ic('puzzle')}碰一碰</li><li>${ic('ear')}听音找飞机</li></ul><span class="more">去玩游戏 ${ic('arrow-right')}</span></a>
+        <ul><li>${ic('target-arrow')}拼音打地鼠</li><li>${ic('puzzle')}碰一碰</li><li>${ic('ear')}听音找飞机</li><li>${ic('mail')}拼音小邮差</li></ul><span class="more">去玩游戏 ${ic('arrow-right')}</span></a>
       <a class="zone z3" href="#parents"><div class="art">${fl('🏡')}</div><div class="who">家长 · FORÆLDRE</div><h3>家长</h3><p>每周学了什么、在家怎么陪练、作业下载。</p>
         <ul><li>${ic('calendar-week')}每周课程</li><li>${ic('folder')}资源库</li><li>${ic('table')}拼音表</li></ul><span class="more">查看本周 ${ic('arrow-right')}</span></a>
     </section>
@@ -212,8 +229,8 @@
   /* ---------- 拼音表 ---------- */
   const CHART_TABS = [
     ['all', '全部学过的', INITIALS], ['bpmf', 'b p m f d t n l', ['b', 'p', 'm', 'f', 'd', 't', 'n', 'l']],
-    ['gkhjqx', 'g k h j q x', ['g', 'k', 'h', 'j', 'q', 'x']],
-  ];
+    ['gkhjqx', 'g k h j q x', ['g', 'k', 'h', 'j', 'q', 'x']], ['zhchshr', 'zh ch sh r', ZCSR],
+  ].filter((t) => t[2].some((i) => learned.has(i)));
   V.chart = (sub) => {
     const tab = CHART_TABS.find((t) => t[0] === sub) || CHART_TABS[0];
     const head = '<div class="ch corner"></div>' + FINALS.map((f) =>
@@ -224,7 +241,7 @@
       rows += `<button class="ch ih g${gi} py" data-l="${i}">${i}<i>${ic('photo')}</i></button>`;
       FINALS.forEach((f) => {
         const k = keyOf(i, f);
-        if (SYL[k]) rows += `<button class="ch ok g${gi}l" data-k="${k}"><span class="py">${show(k)}</span>${f === 'ü' && 'jqx'.includes(i) ? '<em>ü 去两点</em>' : ''}</button>`;
+        if (SYL[k]) rows += `<button class="ch ok g${gi}l" data-k="${k}"><span class="py">${show(k)}</span>${f === 'ü' && isIn(i, JQX) ? '<em>ü 去两点</em>' : f === 'i' && isIn(i, ZCSR) ? '<em>整个读</em>' : ''}</button>`;
         else if (EXTRA_VALID.includes(k)) rows += `<div class="ch ok g${gi}l soft"><span class="py">${k}</span><em>轻声</em></div>`;
         else rows += `<div class="ch no">${ic('x')}<em>不碰</em></div>`;
       });
@@ -238,7 +255,9 @@
       <div class="rules"><div>${ic('users')} <b>g k h</b> 只和 <span class="py">a e u</span> 碰，不和 <span class="py">i ü</span> 碰</div>
         <div>${ic('eye')} <b>j q x</b> 只和 <span class="py">i ü</span> 碰，ü 去掉两点还读 ü</div>
         <div>${ic('diamond')} <b>n l</b> 和 ü 碰，两点不能丢：<span class="py">nǚ lǜ</span></div>
-        <div>${ic('ban')} <b>f</b> 不和 <span class="py">i</span> 碰；<b>b p m f d t</b> 不和 <span class="py">ü</span> 碰</div></div></section>`;
+        <div>${ic('ban')} <b>f</b> 不和 <span class="py">i</span> 碰；<b>b p m f d t</b> 不和 <span class="py">ü</span> 碰</div>
+        ${learned.has('zh') ? `<div>${ic('arrow-big-up-lines')} <b>zh ch sh r</b> 舌头翘起来；和 g k h 一样，不和 <span class="py">ü</span> 碰</div>
+        <div>${ic('sparkles')} <span class="py">zhi chi shi ri</span> 整个读，i 不读成“衣”</div>` : ''}</div></section>`;
   };
   V.chart.mount = (r) => r.addEventListener('click', (e) => {
     const b = e.target.closest('button'); if (!b) return;
@@ -265,7 +284,7 @@
       let mode = 'syl', cur = null, range = store.get('flashR', 'all'), p = pool(range);
       const next = () => {
         const f = $('#flash'), s = $('#fsub');
-        if (mode === 'ini') { const x = pick(learnedIni); cur = ['l', x]; f.textContent = x; s.textContent = LETTER[x] ? LETTER[x][1] : ''; }
+        if (mode === 'ini') { const x = pick(learnedIni); cur = ['l', x]; f.textContent = x; s.textContent = LETTER[x] ? LETTER[x][1] + (LETTER[x][2] ? ' · ' + LETTER[x][2] : '') : ''; }
         else if (mode === 'fin') { const x = pick(FINALS.filter((y) => learned.has(y))); cur = ['l', x]; f.textContent = x; s.textContent = ''; }
         else { const [k, t] = pick(p); cur = ['s', k, t]; f.textContent = show(k, t); s.textContent = ''; }
         f.classList.remove('pop'); void f.offsetWidth; f.classList.add('pop');
@@ -455,7 +474,7 @@
   }
 
   /* ---------- 拼音游戏 ---------- */
-  const GAME_TABS = [['mole', ic('target-arrow') + '打地鼠'], ['peng', ic('puzzle') + '碰一碰'], ['listen', ic('ear') + '听音找飞机']];
+  const GAME_TABS = [['mole', ic('target-arrow') + '打地鼠'], ['peng', ic('puzzle') + '碰一碰'], ['listen', ic('ear') + '听音找飞机'], ['post', ic('mail') + '拼音小邮差']];
   const GAMES = {};
   const teamBar = (key, cur, solo) => `<div class="row tbar">比赛队伍 ${(solo ? [1, 2, 3, 4] : [2, 3, 4]).map((n) =>
     `<button class="go ghost tn ${n === cur ? 'sel' : ''}" data-teams="${n}">${n === 1 ? '个人' : n + ' 队'}</button>`).join('')}</div>`;
@@ -519,8 +538,10 @@
   };
 
   function whyNot(i, f) {
-    if ('gkh'.includes(i)) return `g k h 不和 i、ü 做朋友`;
-    if ('jqx'.includes(i)) return `j q x 只和 i、ü 做朋友`;
+    if (isIn(i, ZCSR) && f === 'ü') return 'zh ch sh r 和 g k h 一样，不和 ü 做朋友';
+    if (isIn(i, ZCSR)) return `${i} 和 ${f} 不能拼在一起`;
+    if (isIn(i, GKH)) return `g k h 不和 i、ü 做朋友`;
+    if (isIn(i, JQX)) return `j q x 只和 i、ü 做朋友`;
     if (i === 'f' && f === 'i') return 'f 不和 i 做朋友';
     if (f === 'ü') return `${i} 不和 ü 做朋友（只有 n l 和 j q x 能和 ü 碰）`;
     return `${i} 和 ${f} 不能拼在一起`;
@@ -539,8 +560,8 @@
         if (!A || !B) return toast('先选一个声母和一个韵母');
         const k = keyOf(A, B), res = $('#res'); res.className = 'res'; void res.offsetWidth;
         if (SYL[k]) {
-          const drop = B === 'ü' && 'jqx'.includes(A);
-          res.innerHTML = `<div class="big py">${show(k)}</div>${drop ? `<p class="note">${ic('eye')} ü 遇到 ${A}，去掉两点：<span class="py">${A}ü → ${show(k)}</span></p>` : ''}
+          const drop = B === 'ü' && isIn(A, JQX), whole = B === 'i' && isIn(A, ZCSR);
+          res.innerHTML = `<div class="big py">${show(k)}</div>${drop ? `<p class="note">${ic('eye')} ü 遇到 ${A}，去掉两点：<span class="py">${A}ü → ${show(k)}</span></p>` : ''}${whole ? `<p class="note">${ic('sparkles')} ${show(k)} 要整个读，i 不读成“衣”</p>` : ''}
             <div class="tones">${[1, 2, 3, 4].map((t) => `<button class="tone t${t} ${hasTone(k, t) && REC.has(k + t) ? '' : 'dim'}" data-t="${t}"><span class="py">${show(k, t)}</span></button>`).join('')}</div>
             <button class="go ghost" id="card">${ic('photo')}看例词和图片</button>`;
           res.classList.add('pop'); beep(true); const ft = [1, 2, 3, 4].find((t) => REC.has(k + t)); if (ft) recSyl(k, ft);
@@ -563,7 +584,7 @@
   };
 
   GAMES.listen = {
-    html: () => `${rangeBar(store.get('listenR', 'all'), true)}${teamBar('listenT', store.get('listenT', 1), true)}<div id="track"></div>
+    html: () => `${rangeBar(store.get('listenR', 'all'), true, true)}${teamBar('listenT', store.get('listenT', 1), true)}<div id="track"></div>
       <div class="q"><button class="ear" id="ear">${ic('volume')}再听一次</button></div><div class="opts" id="opts"></div><div class="msg" id="msg"></div>
       <p class="muted center">${ic('star')} 这台设备上一共得到 <b id="stars">${store.get('stars', 0)}</b> 颗星星</p>`,
     mount(r) {
@@ -574,16 +595,20 @@
           `<span class="cell ${c < steps[i] ? 'done' : ''} ${c === N ? 'goal' : ''}">${c === steps[i] ? plane : c === N ? '🏁' : ''}</span>`).join('')}</div>`;
       const track = () => { $('#track').innerHTML = steps.map((_, i) => lane(i)).join(''); };
       const ask = () => {
-        tries = 0; busy = false; $('#msg').textContent = NT > 1 ? `${TEAMS[turn][0]}，仔细听！` : ''; track(); target = pick(P);
-        const others = shuffle(P.filter(([k]) => k !== target[0]));
-        const near = others.filter(([k]) => iniOf(k) === iniOf(target[0]) || finOf(k) === finOf(target[0]));
-        const opts = [target]; [...near, ...others].forEach((o) => { if (opts.length < 3 && !opts.some(([k]) => k === o[0])) opts.push(o); });
+        tries = 0; busy = false; $('#msg').textContent = NT > 1 ? `${TEAMS[turn][0]}，仔细听！` : ''; track();
+        let opts;
+        if (range === 'pair') { opts = pick(pairPool()); target = pick(opts); } else {
+          target = pick(P);
+          const others = shuffle(P.filter(([k]) => k !== target[0]));
+          const near = others.filter(([k]) => iniOf(k) === iniOf(target[0]) || finOf(k) === finOf(target[0]));
+          opts = [target]; [...near, ...others].forEach((o) => { if (opts.length < 3 && !opts.some(([k]) => k === o[0])) opts.push(o); });
+        }
         $('#opts').innerHTML = shuffle(opts).map(([k, t]) => `<button class="opt py" data-k="${k}" data-t="${t}">${show(k, t)}</button>`).join('');
         setTimeout(() => playSyl(...target), 300);
       };
       const start = () => {
         P = pool(range, true); N = NT > 1 ? 6 : 8; steps = Array(NT).fill(0); turn = 0; track();
-        if (P.length < 3) { $('#opts').innerHTML = ''; $('#msg').textContent = '这一组还没有老师的录音'; return; }
+        if (range === 'pair' ? !pairPool().length : P.length < 3) { $('#opts').innerHTML = ''; $('#msg').textContent = '这一组还没有老师的录音'; return; }
         ask();
       };
       const finish = (i) => {
@@ -621,8 +646,117 @@
     },
   };
 
+  /* 拼音小邮差：看拼音和图，把“信”送到声母车站（不需要录音；有录音就点喇叭听） */
+  GAMES.post = {
+    html: () => `<p class="muted">看拼音和图，把信送到它的声母车站 · Bring brevet til den rigtige station</p>
+      <div class="mole-top"><div class="team-score"><span class="tsc on" style="--c:var(--mustard-d)">${ic('star')} <b id="pstar">0</b></span></div><div class="round" id="rd"></div></div>
+      <div class="post-card" id="pcard"></div><div class="post-st" id="pst"></div><div class="msg" id="msg"></div>`,
+    mount(r) {
+      const groups = INITIAL_GROUPS.map((g) => g.filter((i) => learned.has(i))).filter((g) => g.length);
+      const P = [];
+      Object.keys(SYL).forEach((k) => { const i = iniOf(k); if (!i || !learned.has(i) || !learned.has(finOf(k))) return;
+        [1, 2, 3, 4].forEach((t) => { if (EX[k + t] && SYL[k][t - 1]) P.push([k, t]); }); });
+      const ROUNDS = 10; let round, stars, target, tries, lock, last = [];
+      if (groups.length < 2 || P.length < 4) { $('#msg').textContent = '再学几个声母就能玩啦'; return; }
+      $('#pst').innerHTML = groups.map((g, gi) => `<button class="station g${INITIAL_GROUPS.findIndex((x) => x.includes(g[0]))}" data-g="${gi}">${ic('building-store')}<span class="py">${g.join(' ')}</span><small>站</small></button>`).join('');
+      const ask = () => {
+        tries = 0; lock = false; $('#msg').textContent = '这封信送到哪个车站？';
+        do { target = pick(P); } while (last.includes(target[0]) && P.length > 6);
+        last = [...last, target[0]].slice(-4);
+        const ex = EX[target[0] + target[1]], rec = REC.has(target[0] + target[1]);
+        const c = $('#pcard'); c.innerHTML = `<div class="pic">${pic(ex[1])}</div><div class="py big">${show(...target)}</div><div class="word">${esc(ex[0])}</div>
+          ${rec ? `<button class="go ghost" id="pear">${ic('volume')}听一听</button>` : ''}`;
+        c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
+        $$('.station', r).forEach((b) => b.classList.remove('right', 'wrong'));
+        $('#rd').textContent = `第 ${round + 1} / ${ROUNDS} 封信`;
+        if (rec) recSyl(...target);
+      };
+      const start = () => { round = 0; stars = 0; $('#pstar').textContent = 0; ask(); };
+      const next = () => { round++; if (round >= ROUNDS) { $('#pcard').innerHTML = `<div class="win">送完 ${ROUNDS} 封信，得到 ${stars} 颗星！🏆<br><button class="go" id="again">再送一次</button></div>`; $('#msg').textContent = ''; beep(true); return; } ask(); };
+      r.addEventListener('click', (e) => {
+        const b = e.target.closest('button'); if (!b) return;
+        if (b.id === 'again') return start();
+        if (b.id === 'pear') return recSyl(...target);
+        if (!b.classList.contains('station') || lock || round >= ROUNDS) return;
+        const ok = groups[+b.dataset.g].includes(iniOf(target[0]));
+        if (ok) {
+          lock = true; b.classList.add('right'); beep(true);
+          if (tries === 0) { stars++; $('#pstar').textContent = stars; }
+          $('#msg').textContent = `送到啦！${show(...target)} 是 ${iniOf(target[0])} 开头的 ⭐`; setTimeout(next, 1300);
+        } else {
+          tries++; b.classList.add('wrong'); beep(false);
+          if (tries >= 2) {
+            lock = true; $$('.station', r).forEach((x) => { if (groups[+x.dataset.g].includes(iniOf(target[0]))) x.classList.add('right'); });
+            $('#msg').textContent = `${show(...target)} 的声母是 ${iniOf(target[0])}，送到这里哦`; setTimeout(next, 2200);
+          } else $('#msg').textContent = `再看看，${show(...target)} 的声母是谁？`;
+        }
+      });
+      start();
+    },
+  };
+
   V.games = (sub) => { const id = GAMES[sub] ? sub : 'mole'; return `<section class="card tool-page">${tabs('games', GAME_TABS, id)}<div class="tool-body">${GAMES[id].html()}</div></section>`; };
   V.games.mount = (r, sub) => { fsBind(r); return GAMES[GAMES[sub] ? sub : 'mole'].mount(r); };
+
+  /* ---------- 汉字卡（笔顺动画：Hanzi Writer，MIT 授权） ---------- */
+  /* 库和字的数据放在 lib/ 里；lib/hanzi-data 里没有的字，自动从网上取 */
+  const HW_JS = 'lib/hanzi-writer.min.js';
+  const HW_DATA = (c) => fetch(`lib/hanzi-data/${encodeURIComponent(c)}.json`).then((x) => { if (!x.ok) throw 0; return x.json(); })
+    .catch(() => fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0.1/${encodeURIComponent(c)}.json`).then((x) => x.json()));
+  let hwLoad = null;
+  const loadHW = () => hwLoad || (hwLoad = new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = HW_JS; sc.onload = ok; sc.onerror = () => { hwLoad = null; no(); }; document.head.appendChild(sc); }));
+  const hzList = () => {
+    const seen = []; WEEKS.forEach((w) => { if (w.hanzi && w.date <= today && !seen.includes(w.hanzi)) seen.push(w.hanzi); });
+    const up = nextWeek.hanzi && nextWeek.date > today && !seen.includes(nextWeek.hanzi) ? nextWeek.hanzi : null;
+    return { seen, up };
+  };
+  V.hanzi = (sub) => {
+    const { seen, up } = hzList(); const all = up ? [...seen, up] : seen;
+    let c = decodeURIComponent(sub || ''); if (!all.includes(c)) c = seen[seen.length - 1] || up;
+    if (!c) return '<section class="card"><h2>汉字</h2><p class="muted">还没有学汉字</p></section>';
+    const info = HANZI[c] || ['', []], pair = (window.HANZI_PAIRS || []).find((pr) => pr.includes(c));
+    return `<section class="card hz-page"><div class="head-row"><h2>汉字卡</h2><small class="muted">每周一个字 · Ugens tegn</small></div>
+      <div class="ranges">${all.map((x) => `<a class="rg hzc ${x === c ? 'sel' : ''}" href="#hanzi/${encodeURIComponent(x)}">${x}${x === up ? '<small>下一次课</small>' : ''}</a>`).join('')}</div>
+      <div class="hz-main"><div class="tzg"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="1" y="1" width="98" height="98"/><path d="M50 1V99M1 50H99M1 1L99 99M99 1L1 99"/></svg><div id="hw"></div><div class="hz-fb" id="hzfb">${c}</div></div>
+        <div class="hz-side"><div class="hz-py py">${info[0]}</div>
+          <ol class="strokes" id="sl">${info[1].map((n, i) => `<li data-i="${i}"><b>${i + 1}</b>${n}</li>`).join('')}</ol>
+          <div class="cm-btns"><button class="go" id="hplay">${ic('player-play')}看笔顺</button><button class="go ghost" id="hstep">${ic('hand-finger')}一笔一笔</button>
+            <button class="go ghost" id="hquiz">${ic('pencil')}我来写</button><button class="go ghost" id="hsay">${ic('volume')}读一读</button></div>
+          <p class="muted" id="hmsg">${info[1].length ? `一共 ${info[1].length} 笔` : ''}</p>
+          ${pair ? `<div class="hz-pair">${ic('arrows-left-right')} 比一比：${pair.map((x) => `<a href="#hanzi/${encodeURIComponent(x)}" class="${x === c ? 'on' : ''}">${x} <span class="py">${(HANZI[x] || [''])[0]}</span></a>`).join('')}</div>` : ''}
+        </div></div></section>`;
+  };
+  V.hanzi.mount = (r, sub) => {
+    const { seen, up } = hzList(); const all = up ? [...seen, up] : seen;
+    let c = decodeURIComponent(sub || ''); if (!all.includes(c)) c = seen[seen.length - 1] || up; if (!c) return;
+    const n = ((HANZI[c] || [])[1] || []).length; let w = null, step = 0, alive = true;
+    const mark = (i) => $$('#sl li', r).forEach((li) => { li.classList.toggle('on', +li.dataset.i === i); li.classList.toggle('done', +li.dataset.i < i); });
+    const msg = (t) => { $('#hmsg').textContent = t; };
+    loadHW().then(() => {
+      if (!alive) return;
+      const box = $('#hw'), size = box.clientWidth || 280;
+      w = HanziWriter.create(box, c, { width: size, height: size, padding: size * 0.08, showOutline: true, strokeColor: '#1F2A44', outlineColor: '#E4DED3',
+        highlightColor: '#D9734E', drawingColor: '#D9734E', strokeAnimationSpeed: 0.8, delayBetweenStrokes: 450,
+        charDataLoader: (ch, onLoad, onErr) => HW_DATA(ch).then(onLoad).catch(onErr),
+        onLoadCharDataSuccess: () => { $('#hzfb').style.display = 'none'; }, onLoadCharDataError: () => { w = null; msg('笔顺动画加载不了，先看字和笔画名称'); } });
+    }).catch(() => msg('笔顺动画加载不了，先看字和笔画名称'));
+    r.addEventListener('click', (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.id === 'hsay') return HANZI[c] ? speak(c) : null;
+      if (!w) return toast('笔顺动画还没加载好');
+      if (b.id === 'hplay') { step = 0; w.cancelQuiz(); w.hideCharacter(); let i = 0; mark(0);
+        w.animateCharacter({ onComplete: () => { mark(n); msg('写完啦！'); } });
+        const tick = setInterval(() => { i++; if (i >= n || !alive) return clearInterval(tick); mark(i); }, 1250); msg('看老师写'); }
+      if (b.id === 'hstep') { w.cancelQuiz(); if (step === 0 || step >= n) { w.hideCharacter(); step = 0; }
+        mark(step); const name = (HANZI[c][1] || [])[step] || ''; w.animateStroke(step); step++;
+        msg(step >= n ? `第 ${step} 笔：${name}。写完啦！再点一次从头开始` : `第 ${step} 笔：${name}`); }
+      if (b.id === 'hquiz') { step = 0; mark(0); w.showOutline(); w.hideCharacter();
+        w.quiz({ onCorrectStroke: (d) => { mark(d.strokeNum + 1); msg(`第 ${d.strokeNum + 1} 笔写对了！`); },
+          onMistake: () => msg('不对哦，看看橙色的提示再写'), onComplete: () => { beep(true); mark(n); msg('写对啦！⭐'); } });
+        msg('用手指或鼠标在田字格里写'); }
+    });
+    return () => { alive = false; };
+  };
 
   /* ---------- 家长专区 ---------- */
   const fileList = (files) => (files ? `<div class="dl">${files.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${ic('file-type-pdf')}${t}</a>`).join('')}</div>` : '');
@@ -631,9 +765,9 @@
       <li>每天 5–10 分钟，比一周一次练很久更有效。</li>
       <li>拼读口诀：<b>前音轻短后音重，两音相连猛一碰</b>。先拆（g—ē），再拼（gē），最后说一个词（鸽子）。</li>
       <li>孩子能听懂中文是很大的优势：拼出一个音节，就问“这是哪个词里的音？”</li>
-      <li>可以用 <a href="#chart">拼音表</a> 和 <a href="#games/listen">听音找飞机</a> 在家练。网站读音来自浏览器，个别声调可能不准，以老师课上读音为准。</li></ul></div>
+      <li>可以用 <a href="#chart">拼音表</a> 和 <a href="#games/listen">听音找飞机</a> 在家练。游戏里只播放老师的录音；拼音表里还没有录音的音节由浏览器朗读，个别声调可能不准，以老师课上读音为准。</li></ul></div>
     ${WEEKS.slice().reverse().map((w) => `<article class="card week ${w === nextWeek ? 'now' : ''}">
-      <div class="wd">${fmt(w.date)}${w === nextWeek ? ' <span class="badge">下一次课</span>' : ''}${w.hanzi ? ` <span class="hz">汉字 ${w.hanzi}</span>` : ''}</div>
+      <div class="wd">${fmt(w.date)}${w === nextWeek ? ' <span class="badge">下一次课</span>' : ''}${w.hanzi ? ` <a class="hz" href="#hanzi/${encodeURIComponent(w.hanzi)}">汉字 ${w.hanzi}</a>` : ''}</div>
       <h3>${w.title}</h3>
       ${w.learn.length ? `<div class="chips">${w.learn.map((x) => `<button class="chip" data-l="${x}"><span class="py">${x}</span>${LETTER[x] ? ` <small>${LETTER[x][1]}</small>` : ''}</button>`).join('')}</div>` : ''}
       <div class="cols"><div><h4>课上</h4><ul>${w.points.map((p) => `<li>${p}</li>`).join('')}</ul></div>

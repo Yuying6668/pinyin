@@ -298,3 +298,51 @@ button.ch.ok:hover{transform:translateY(-2px);border-color:var(--ink)}
 .track.lane.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 10%,transparent)}
 .lname{display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--c);font-size:1.1rem}
 .track.lane .cell.done{background:color-mix(in srgb,var(--c) 22%,transparent)}
+
+/* zh ch sh r 一组 */
+:root{--lilac:#A58CB8;--lilac-d:#76598C;--lilac-t:#EEE7F3}
+.g4{background:var(--lilac-t)}
+.sheet-card.letter .act{display:inline-flex;align-items:center;gap:.35rem;background:var(--mustard-t);color:var(--mustard-d);border-radius:99px;padding:.2rem .9rem;margin:.1rem 0 .5rem;font-size:.95rem}
+a.hz{text-decoration:none}
+.opts:has(> .opt:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,14rem));justify-content:center}
+
+/* 拼音小邮差 */
+.post-card{max-width:22rem;margin:0 auto 1.2rem;background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:1rem 1rem 1.2rem;text-align:center}
+.post-card .pic{font-size:4rem;line-height:1}.post-card .pic img{width:6rem;height:6rem;object-fit:contain}
+.post-card .big{font-size:4.4rem;line-height:1.1;color:var(--terra)}
+.post-card .word{font-size:1.2rem;color:var(--ink2);margin-bottom:.4rem}
+.post-card .win{font-size:1.6rem;font-weight:900;color:var(--sage-d)}.post-card .win .go{display:flex;margin:1rem auto 0;width:max-content}
+.post-st{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.8rem}
+.station{display:flex;flex-direction:column;align-items:center;gap:.1rem;padding:.8rem .4rem;border-radius:20px;border:2px solid var(--line2);font-size:1.6rem;transition:transform .15s}
+.station .ti{font-size:1.4rem;color:var(--ink2)}.station small{margin:0;font-size:.85rem}
+.station:hover{transform:translateY(-2px);border-color:var(--ink)}
+.station.right{border-color:var(--sage-d);box-shadow:0 0 0 4px var(--sage-t)}
+.station.wrong{border-color:var(--terra);animation:shake .4s}
+
+/* 汉字卡 */
+.hzc{font-size:1.6rem;font-family:"Kaiti SC","STKaiti","KaiTi",var(--cn);padding:.25rem 1rem;display:inline-flex;align-items:center;gap:.3rem}
+.hzc small{font-size:.7rem;margin:0;font-family:var(--cn)}.hzc.sel small{color:#fff}
+.hz-main{display:grid;grid-template-columns:minmax(0,22rem) 1fr;gap:2rem;align-items:start;margin-top:1rem}
+.tzg{position:relative;aspect-ratio:1;width:100%;background:#fff}
+.tzg > svg{position:absolute;inset:0;width:100%;height:100%}
+.tzg > svg rect{fill:none;stroke:var(--terra);stroke-width:1.2}.tzg > svg path{stroke:var(--terra);stroke-width:.5;stroke-dasharray:2 2;fill:none}
+#hw{position:absolute;inset:0}#hw svg{position:static}
+.hz-fb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(8rem,30vw,15rem);font-family:"Kaiti SC","STKaiti","KaiTi",serif;color:var(--ink)}
+.hz-py{font-size:3rem;color:var(--terra);line-height:1.1}
+.strokes{list-style:none;padding:0;margin:1rem 0;display:flex;flex-wrap:wrap;gap:.5rem}
+.strokes li{display:flex;align-items:center;gap:.4rem;padding:.35rem .8rem;border-radius:12px;border:1px solid var(--line2);font-size:1.15rem}
+.strokes li b{display:inline-flex;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--paper);align-items:center;justify-content:center;font-size:.85rem}
+.strokes li.on{border-color:var(--terra);background:var(--terra-t)}.strokes li.done{opacity:.55}
+.hz-pair{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;background:var(--paper);border-radius:14px;padding:.6rem .9rem;margin-top:.6rem}
+.hz-pair a{text-decoration:none;border:1px solid var(--line2);border-radius:10px;padding:.15rem .7rem;font-size:1.3rem;background:var(--card)}
+.hz-pair a.on{border-color:var(--ink)}
+@media (max-width:860px){
+  .hz-main{grid-template-columns:1fr;gap:1rem}.tzg{max-width:20rem;margin:0 auto}
+  .post-card .big{font-size:3.4rem}.station{font-size:1.3rem}
+  nav{overflow-x:auto;scrollbar-width:none}
+}
+@media (max-width:860px){
+  .chart{grid-template-columns:2.6rem repeat(6,minmax(0,1fr));gap:.25rem}
+  .chart .ch{min-width:0;padding-left:0;padding-right:0}
+}
+@media (max-width:420px){ .chart .ch{font-size:1.2rem} }
