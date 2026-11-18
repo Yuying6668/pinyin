@@ -31,7 +31,9 @@
   /* 预览以后的进度：网址后面加 ?today=2026-11-28 */
   const qDay = new URLSearchParams(location.search).get('today');
   const today = /^\d{4}-\d{2}-\d{2}$/.test(qDay || '') ? qDay : new Date().toISOString().slice(0, 10);
-  const learned = new Set(WEEKS.filter((w) => w.date <= today).flatMap((w) => w.learn));
+  /* 老师用的主站：data.js 里写好的周全部解锁（包括还没上的课）；家长用的 biao.html 按日期解锁 */
+  const openDay = window.ONLY || qDay ? today : '9999-12-31';
+  const learned = new Set(WEEKS.filter((w) => w.date <= openDay).flatMap((w) => w.learn));
   const learnedIni = INITIALS.filter((i) => learned.has(i));
   const nextWeek = WEEKS.find((w) => w.date >= today) || WEEKS[WEEKS.length - 1];
   const fmt = (d) => { const [, m, dd] = d.split('-'); return `${+m}月${+dd}日`; };
@@ -188,7 +190,7 @@
 
   /* ---------- 首页 ---------- */
   V.home = () => {
-    const last = [...WEEKS].reverse().find((w) => w.date <= today && w.learn.length);
+    const last = [...WEEKS].reverse().find((w) => w.date <= openDay && w.learn.length);
     const grp = [['单韵母', FINALS], ...INITIAL_GROUPS.map((g) => [GROUP_NAME(g), g])];
     let st = '';
     grp.forEach(([name, ls]) => {
@@ -706,17 +708,18 @@
   let hwLoad = null;
   const loadHW = () => hwLoad || (hwLoad = new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = HW_JS; sc.onload = ok; sc.onerror = () => { hwLoad = null; no(); }; document.head.appendChild(sc); }));
   const hzList = () => {
-    const seen = []; WEEKS.forEach((w) => { if (w.hanzi && w.date <= today && !seen.includes(w.hanzi)) seen.push(w.hanzi); });
-    const up = nextWeek.hanzi && nextWeek.date > today && !seen.includes(nextWeek.hanzi) ? nextWeek.hanzi : null;
-    return { seen, up };
+    const seen = [], when = {}; WEEKS.forEach((w) => { if (w.hanzi && w.date <= openDay && !seen.includes(w.hanzi)) { seen.push(w.hanzi); if (w.date > today) when[w.hanzi] = fmt(w.date); } });
+    const up = nextWeek.hanzi && nextWeek.date > openDay && !seen.includes(nextWeek.hanzi) ? nextWeek.hanzi : null;
+    if (up) when[up] = '下一次课';
+    return { seen, up, when };
   };
   V.hanzi = (sub) => {
-    const { seen, up } = hzList(); const all = up ? [...seen, up] : seen;
-    let c = decodeURIComponent(sub || ''); if (!all.includes(c)) c = seen[seen.length - 1] || up;
+    const { seen, up, when } = hzList(); const all = up ? [...seen, up] : seen;
+    let c = decodeURIComponent(sub || ''); if (!all.includes(c)) c = seen.filter((x) => !when[x]).pop() || seen[0] || up;
     if (!c) return '<section class="card"><h2>汉字</h2><p class="muted">还没有学汉字</p></section>';
     const info = HANZI[c] || ['', []], pair = (window.HANZI_PAIRS || []).find((pr) => pr.includes(c));
     return `<section class="card hz-page"><div class="head-row"><h2>汉字卡</h2><small class="muted">每周一个字 · Ugens tegn</small></div>
-      <div class="ranges">${all.map((x) => `<a class="rg hzc ${x === c ? 'sel' : ''}" href="#hanzi/${encodeURIComponent(x)}">${x}${x === up ? '<small>下一次课</small>' : ''}</a>`).join('')}</div>
+      <div class="ranges">${all.map((x) => `<a class="rg hzc ${x === c ? 'sel' : ''}" href="#hanzi/${encodeURIComponent(x)}">${x}${when[x] ? `<small>${when[x]}</small>` : ''}</a>`).join('')}</div>
       <div class="hz-main"><div class="tzg"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="1" y="1" width="98" height="98"/><path d="M50 1V99M1 50H99M1 1L99 99M99 1L1 99"/></svg><div id="hw"></div><div class="hz-fb" id="hzfb">${c}</div></div>
         <div class="hz-side"><div class="hz-py py">${info[0]}</div>
           <ol class="strokes" id="sl">${info[1].map((n, i) => `<li data-i="${i}"><b>${i + 1}</b>${n}</li>`).join('')}</ol>
@@ -727,8 +730,8 @@
         </div></div></section>`;
   };
   V.hanzi.mount = (r, sub) => {
-    const { seen, up } = hzList(); const all = up ? [...seen, up] : seen;
-    let c = decodeURIComponent(sub || ''); if (!all.includes(c)) c = seen[seen.length - 1] || up; if (!c) return;
+    const { seen, up, when } = hzList(); const all = up ? [...seen, up] : seen;
+    let c = decodeURIComponent(sub || ''); if (!all.includes(c)) c = seen.filter((x) => !when[x]).pop() || seen[0] || up; if (!c) return;
     const n = ((HANZI[c] || [])[1] || []).length; let w = null, step = 0, alive = true;
     const mark = (i) => $$('#sl li', r).forEach((li) => { li.classList.toggle('on', +li.dataset.i === i); li.classList.toggle('done', +li.dataset.i < i); });
     const msg = (t) => { $('#hmsg').textContent = t; };
