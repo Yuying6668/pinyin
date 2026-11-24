@@ -534,3 +534,54 @@ a.hz{text-decoration:none}
   .fcell small{display:none}.fcell b{font-size:1.2em}
   .gside .team-score.col{flex-direction:row}
 }
+
+/* ===== 封面 + 汉字游戏（2026-11-25） ===== */
+.k-lilac{--k:var(--lilac);--kd:var(--lilac-d);--kt:var(--lilac-t)}
+.gtile{padding:0 0 1.1rem}
+.gtile:before{display:none}
+.gt-cover{aspect-ratio:2/1;overflow:hidden;border-bottom:1px solid var(--line);background:var(--kt)}
+.gt-cover svg,.gt-cover img{width:100%;height:100%;display:block;object-fit:cover;transition:transform .35s}
+.gtile:hover .gt-cover svg,.gtile:hover .gt-cover img{transform:scale(1.04)}
+.gtile .gt-top,.gtile h3,.gtile p,.gtile .gt-foot{margin-left:1.3rem;margin-right:1.3rem}
+.gtile .gt-top{margin-top:.9rem;margin-bottom:.35rem}
+.gt-cat{display:inline-flex;align-items:center;gap:.3rem}
+.gtile{min-height:0}
+/* 加一笔变魔术 */
+.magic{display:flex;justify-content:center;margin:.2rem 0 .4rem}
+.mg-box{width:min(19rem,70vw);text-align:center}
+.tzgw{position:relative;aspect-ratio:1;background:#fff}
+.tzg-bg,.rl-tzg > svg{position:absolute;inset:0;width:100%;height:100%}
+.tzg-bg rect,.rl-tzg > svg rect{fill:none;stroke:var(--terra);stroke-width:1.2}
+.tzg-bg path,.rl-tzg > svg path{stroke:var(--terra);stroke-width:.5;stroke-dasharray:2 2;fill:none}
+.tzgw .gl{position:absolute;inset:6%}
+.glyph{width:100%;height:100%;display:block}.glyph path{fill:var(--ink)}
+.glyph path.newst{fill:var(--terra);transform-origin:512px 512px;animation:newst .9s cubic-bezier(.34,1.5,.64,1) .15s both}
+@keyframes newst{0%{opacity:0;transform:scale(1.6)}60%{opacity:1}100%{opacity:1;transform:scale(1)}}
+.gl-fb{display:flex;align-items:center;justify-content:center;height:100%;font-size:12rem;font-family:"Kaiti SC","STKaiti","KaiTi",serif}
+.mg-cap{display:flex;align-items:baseline;justify-content:center;gap:.6rem;margin-top:.5rem}
+.mg-cap b{font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:2.2rem}.mg-cap .py{font-size:1.8rem;color:var(--terra)}
+.magic-on .tzgw{box-shadow:0 0 0 6px var(--mustard-t)}
+.strk{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin:.6rem 0}
+.sopt{width:8.5rem;padding:.8rem .5rem .7rem;border-radius:22px;background:var(--card);border:2px solid var(--line2);display:flex;flex-direction:column;align-items:center;gap:.2rem;color:var(--ink);font-size:1.25rem;font-weight:700;box-shadow:0 5px 0 var(--line);transition:transform .15s}
+.sopt svg{width:4.5rem;height:4.5rem}
+.sopt:hover{transform:translateY(-3px);border-color:var(--ink)}
+.sopt.right{background:var(--sage-t);border-color:var(--sage-d);color:var(--sage-d)}
+.sopt.wrong{background:var(--terra-t);border-color:var(--terra);animation:shake .4s}
+/* 象形字 */
+.hzc2{font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:clamp(3rem,6vw,4.6rem);line-height:1}
+.mfront small.py{font-size:1.1rem;color:var(--terra)}
+/* 笔顺接力 */
+.relay{display:flex;flex-direction:column;align-items:center;gap:.9rem}
+.rl-tzg{position:relative;width:min(30rem,100%);aspect-ratio:1;background:#fff}
+#rhw{position:absolute;inset:0}#rhw svg{position:static}
+.rl-chars{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center}
+.rl-chars span{width:2.6rem;height:2.6rem;border-radius:10px;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:1.5rem;color:var(--muted)}
+.rl-chars span.on{border:2px solid var(--terra);color:var(--ink);background:var(--terra-t)}
+.rl-chars span.done{background:var(--sage-t);color:var(--sage-d);border-color:var(--sage)}
+.hzbig{font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:5rem;line-height:1.1}
+.jpy{font-size:1.5rem;color:var(--terra)}
+@media (max-width:860px){.sopt{width:6.5rem}.sopt svg{width:3.4rem;height:3.4rem}}
+.rl-tzg{width:min(26rem,62vh,100%)}
+.gname{flex:1 1 12rem}
+.gname p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gjump a{width:2.1rem;height:2.1rem}

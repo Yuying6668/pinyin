@@ -125,6 +125,7 @@
     '🕷️': 'Spider', '📄': 'Page facing up', '🍴': 'Fork and knife', '🍵': 'Teacup without handle', '🚗': 'Automobile', '🚪': 'Door',
     '🍳': 'Cooking', '📏': 'Straight ruler', '🪽': 'Wing', '🏖️': 'Beach with umbrella', '🤪': 'Zany face', '🐍': 'Snake', '🐭': 'Mouse face',
     '🌳': 'Deciduous tree', '🦁': 'Lion', '🔟': 'Keycap 10', '✅': 'Check mark button', '☀️': 'Sun', '🌅': 'Sunrise', '🍎': 'Red apple',
+    '🌙': 'Crescent moon', '💧': 'Droplet', '🔥': 'Fire', '👄': 'Mouth', '🌾': 'Sheaf of rice', '🏆': 'Trophy',
   };
   const FLBASE = 'https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/';
   function flUrl(e) {
@@ -477,6 +478,9 @@
 
   /* ---------- 拼音游戏 ---------- */
   const GAMES = {};
+  /* 游戏里的定时器：换页面时全部取消，免得上一个游戏的动作跑到新页面里 */
+  const TIMERS = [];
+  const later = (fn, ms) => { TIMERS.push(setTimeout(fn, ms)); };
   /* 游戏设置面板：可以收起来（投影时省地方），开关状态记在这台电脑上 */
   const conf = (rangeHtml, ...opts) => `<details class="gconf" ${store.get('confOpen', true) ? 'open' : ''}><summary>${ic('adjustments-horizontal')}游戏设置<span class="gconf-tip">点这里收起 / 打开</span></summary>
     <div class="gconf-in">${rangeHtml || ''}<div class="gset">${opts.join('')}</div></div></details>`;
@@ -508,7 +512,7 @@
         const spots = shuffle([0, 1, 2, 3, 4, 5]).slice(0, opts.length); const cells = Array(6).fill(null);
         opts.forEach((o, i) => { cells[spots[i]] = o; });
         holes().innerHTML = cells.map((o) => `<div class="hole">${o ? `<button class="mole up py" data-k="${o[0]}" data-t="${o[1]}"><span class="face">${fl('🐹')}</span><span class="lbl">${show(o[0], o[1])}</span></button>` : ''}<div class="dirt"></div></div>`).join('');
-        hud(); setTimeout(() => playSyl(...target), 450);
+        hud(); later(() => playSyl(...target), 450);
       };
       const start = () => {
         P = pool(range, true); round = 0; sc = Array(NT).fill(0); turn = 0; ROUNDS = NT * ({ 2: 5, 3: 4, 4: 3 }[NT] || 4);
@@ -529,14 +533,14 @@
           if (b.dataset.k === target[0] && +b.dataset.t === target[1]) {
             lock = true; b.classList.add('hit'); beep(true); sc[turn]++; $('#msg').textContent = '打中啦！⭐';
             round++; turn = (turn + 1) % NT; hud();
-            setTimeout(() => (round >= ROUNDS ? end() : ask()), 1100);
+            later(() => (round >= ROUNDS ? end() : ask()), 1100);
           } else {
             tries++; b.classList.add('miss'); beep(false);
             if (tries >= 2) {
               lock = true; $$('.mole', r).forEach((m) => { if (m.dataset.k === target[0]) m.classList.add('hit'); });
               $('#msg').textContent = `是 ${show(...target)}，换下一队！`; round++; turn = (turn + 1) % NT; hud();
-              setTimeout(() => (round >= ROUNDS ? end() : ask()), 1800);
-            } else { $('#msg').textContent = '不对哦，再听一次 👂'; setTimeout(() => playSyl(...target), 350); }
+              later(() => (round >= ROUNDS ? end() : ask()), 1800);
+            } else { $('#msg').textContent = '不对哦，再听一次 👂'; later(() => playSyl(...target), 350); }
           }
         }
       });
@@ -611,7 +615,7 @@
           opts = [target]; [...near, ...others].forEach((o) => { if (opts.length < 3 && !opts.some(([k]) => k === o[0])) opts.push(o); });
         }
         $('#opts').innerHTML = shuffle(opts).map(([k, t]) => `<button class="opt py" data-k="${k}" data-t="${t}">${show(k, t)}</button>`).join('');
-        setTimeout(() => playSyl(...target), 300);
+        later(() => playSyl(...target), 300);
       };
       const start = () => {
         P = pool(range, true); N = NT > 1 ? 6 : 8; steps = Array(NT).fill(0); turn = 0; track();
@@ -638,15 +642,15 @@
           if (NT > 1) $('#msg').textContent = move ? `${TEAMS[turn][0]}前进一格！✈️` : '答对啦，但这次不前进';
           track();
           if (steps[turn] >= N) return finish(turn);
-          setTimeout(next, 1000);
+          later(next, 1000);
         } else {
           tries++; b.classList.add('wrong'); beep(false);
           if (tries >= 2) {
             $$('.opt', r).forEach((o) => { if (o.dataset.k === target[0] && +o.dataset.t === target[1]) o.classList.add('right'); });
-            if (NT > 1) { busy = true; $('#msg').textContent = `是 ${show(...target)}，换下一队！`; setTimeout(() => playSyl(...target), 400); return setTimeout(next, 2200); }
+            if (NT > 1) { busy = true; $('#msg').textContent = `是 ${show(...target)}，换下一队！`; later(() => playSyl(...target), 400); return later(next, 2200); }
             $('#msg').textContent = `是 ${show(...target)}，听一听`;
           } else $('#msg').textContent = '再听一次，仔细听 👂';
-          setTimeout(() => playSyl(...target), 400);
+          later(() => playSyl(...target), 400);
         }
       });
       start();
@@ -689,12 +693,12 @@
         if (ok) {
           lock = true; b.classList.add('right'); beep(true);
           if (tries === 0) { stars++; $('#pstar').textContent = stars; }
-          $('#msg').textContent = `送到啦！${show(...target)} 是 ${iniOf(target[0])} 开头的 ⭐`; setTimeout(next, 1300);
+          $('#msg').textContent = `送到啦！${show(...target)} 是 ${iniOf(target[0])} 开头的 ⭐`; later(next, 1300);
         } else {
           tries++; b.classList.add('wrong'); beep(false);
           if (tries >= 2) {
             lock = true; $$('.station', r).forEach((x) => { if (groups[+x.dataset.g].includes(iniOf(target[0]))) x.classList.add('right'); });
-            $('#msg').textContent = `${show(...target)} 的声母是 ${iniOf(target[0])}，送到这里哦`; setTimeout(next, 2200);
+            $('#msg').textContent = `${show(...target)} 的声母是 ${iniOf(target[0])}，送到这里哦`; later(next, 2200);
           } else $('#msg').textContent = `再看看，${show(...target)} 的声母是谁？`;
         }
       });
@@ -755,13 +759,13 @@
         }
         if (phase !== 'play' || who[i]) return;
         who[i] = turn + 1; lock = true; const isBad = bad.has(i);
-        if (isBad) { sc[turn] = Math.max(0, sc[turn] - 2); beep(false); say(`☠️ 哎呀！${TEAMS[turn][0]}中毒了，扣 2 分`); }
+        if (isBad) { sc[turn] = Math.max(0, sc[turn] - 2); beep(false); later(() => cheer('poison'), 1300); say(`☠️ 哎呀！${TEAMS[turn][0]}中毒了，扣 2 分`); }
         else { sc[turn]++; beep(true); say(`${TEAMS[turn][0]} +1 ⭐`); }
-        setTimeout(() => recSyl(...cards[i]), 350);
+        later(() => recSyl(...cards[i]), 350);
         draw(); $(`.pcard[data-i="${i}"]`, r).classList.add(isBad ? 'shake' : 'pop'); hud();
-        setTimeout(() => {
+        later(() => {
           lock = false;
-          if (!left()) { phase = 'end'; draw(); hud(); say(''); $('.stagebox', r).insertAdjacentHTML('beforeend', winBox(winner(NT, sc))); return beep(true); }
+          if (!left()) { phase = 'end'; draw(); hud(); say(''); return showWin(r, winner(NT, sc)); }
           turn = (turn + 1) % NT; hud(); say(`${TEAMS[turn][0]}：先读，再翻！`);
         }, 1500);
       });
@@ -811,7 +815,7 @@
       };
       const vanish = () => {
         if (!deck.length) deck = shuffle(items.map((_, i) => i).filter((i) => i !== hide));
-        hide = deck.pop(); if (MIX) pos = shuffle(pos); phase = 'guess'; draw(); hud(); beep(true);
+        hide = deck.pop(); if (MIX) pos = shuffle(pos); phase = 'guess'; draw(); hud(); if (!cheer('gone')) beep(true);
         say(NT > 1 ? `${TEAMS[turn][0]}：谁不见了？` : '谁不见了？🤔'); ctl(`<button class="go" data-a="show">${ic('bulb')}揭晓答案</button>`);
       };
       const look = () => {
@@ -828,7 +832,7 @@
         if (NT > 1) {
           if (ok) { sc[turn]++; beep(true); }
           round++; turn = (turn + 1) % NT;
-          if (round >= ROUNDS()) { phase = 'end'; hud(); ctl(''); say(''); return $('.stagebox', r).insertAdjacentHTML('beforeend', winBox(winner(NT, sc))); }
+          if (round >= ROUNDS()) { phase = 'end'; hud(); ctl(''); say(''); return showWin(r, winner(NT, sc)); }
         }
         look();
       };
@@ -881,7 +885,7 @@
         $('#ts').innerHTML = TEAMS.slice(0, NT).map((t, i) => `<span class="tsc ${i === turn && phase !== 'end' ? 'on' : ''}" style="--c:${t[1]}">${ic('plane')} ${t[0]}<b>${at[i]}<small>格</small></b></span>`).join('');
       };
       const panelRoll = () => { phase = 'roll'; busy = false; $('#fp').innerHTML = `${dice(0)}<button class="go big" data-a="roll">${ic('dice-5')}掷骰子</button><p class="muted small">也可以按空格键</p>`; say(`${TEAMS[turn][0]}掷骰子！`); draw(); };
-      const wait = (ms) => new Promise((ok) => setTimeout(ok, ms));
+      const wait = (ms) => new Promise((ok) => later(ok, ms));
       const walk = async (to) => { const d = to > at[turn] ? 1 : -1; while (alive && at[turn] !== to) { at[turn] += d; draw(); await wait(230); } };
       const roll = async () => {
         if (busy || phase !== 'roll') return; busy = true; phase = 'move';
@@ -895,7 +899,7 @@
         phase = 'read'; draw(); $('#fp').innerHTML = judgeBox(...cells[at[turn]], `${TEAMS[turn][0]}读一读`); say('先读出来，老师再判断'); busy = false;
       };
       const nextTurn = () => { turn = (turn + 1) % NT; panelRoll(); };
-      const win = () => { phase = 'end'; draw(); $('#fp').innerHTML = ''; say(''); beep(true); $('.stagebox', r).insertAdjacentHTML('beforeend', winBox(`${TEAMS[turn][0]}先飞到终点，赢啦！🏆`)); };
+      const win = () => { phase = 'end'; draw(); $('#fp').innerHTML = ''; say(''); showWin(r, `${TEAMS[turn][0]}先飞到终点，赢啦！🏆`); };
       const start = () => {
         $('.gwin', r)?.remove(); const P = pool(range, true); turn = 0; at = Array(NT).fill(0);
         if (P.length < 4) { cells = []; draw(); $('#fp').innerHTML = ''; return say('这一组还没有足够的老师录音'); }
@@ -911,7 +915,7 @@
         if (phase !== 'read' || busy) return;
         const c = cells[at[turn]];
         if (b.dataset.j === 'ear') return recSyl(...c);
-        if (b.dataset.j === 'yes') { busy = true; beep(true); setTimeout(() => recSyl(...c), 300); say('读对了！停在这里 ✈️'); await wait(1500); if (alive) nextTurn(); }
+        if (b.dataset.j === 'yes') { busy = true; beep(true); later(() => recSyl(...c), 300); say('读对了！停在这里 ✈️'); await wait(1500); if (alive) nextTurn(); }
         if (b.dataset.j === 'no') {
           busy = true; recSyl(...c); say('听一听老师怎么读，飞回原来的位置'); await wait(1600); if (!alive) return;
           phase = 'move'; await walk(from); if (alive) nextTurn();
@@ -923,71 +927,239 @@
     },
   };
 
+  /* ---------- 翻翻乐引擎（拼音翻翻乐、象形字配对共用） ---------- */
+  /* cfg: p 存设置用的前缀, defT 默认队伍, items() 出题, face(it, side) 卡面, sound(it, side) 声音, empty 没题时的提示 */
+  function memoEngine(r, cfg) {
+    let cards = [], open = [], done = [], sc = [], turn = 0, lock = false, tries = 0, pairs = 0, NT = 1;
+    const say = (t) => { $('#msg').textContent = t; };
+    const found = () => done.filter(Boolean).length / 2;
+    const hud = () => {
+      $('#ts').innerHTML = NT > 1 ? scoreBoard(NT, sc, turn) : `<span class="tsc on" style="--c:var(--sage-d)">${ic('cards')} 找到 <b>${found()}</b> / ${pairs} 对</span>`;
+      $('#rd').textContent = `翻了 ${tries} 次`;
+    };
+    const draw = () => {
+      const g = $('#grid'); g.style.setProperty('--cols', 4);
+      g.innerHTML = cards.map((c, i) => `<button class="mcard ${open.includes(i) || done[i] ? 'open' : ''} ${done[i] ? 'done' : ''}" data-i="${i}" ${done[i] ? `style="--c:${NT > 1 ? TEAMS[done[i] - 1][1] : 'var(--sage-d)'}"` : ''}>
+        <span class="mback"><svg viewBox="0 0 240 160"><use href="#yy"/></svg></span><span class="mfront">${cfg.face(c.it, c.side)}</span></button>`).join('');
+    };
+    const start = () => {
+      $('.gwin', r)?.remove(); NT = store.get(cfg.p + 'T', cfg.defT); const N = store.get(cfg.p + 'N', 6), items = cfg.items();
+      open = []; done = []; sc = Array(NT).fill(0); turn = 0; lock = false; tries = 0;
+      if (items.length < 3) { cards = []; pairs = 0; draw(); hud(); return say(cfg.empty()); }
+      const ps = items.slice(0, N); pairs = ps.length;
+      cards = shuffle(ps.flatMap((it, id) => [{ id, it, side: 0 }, { id, it, side: 1 }]));
+      draw(); hud(); say(NT > 1 ? `${TEAMS[0][0]}先翻两张` : '翻开两张，找出一对');
+    };
+    r.addEventListener('click', (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.range) { rangeHit(r, b, cfg.p + 'R'); return start(); }
+      if (b.dataset.opt) { store.set(cfg.p + b.dataset.opt, optHit(r, b)); return start(); }
+      if (b.id === 'again') return start();
+      if (!b.classList.contains('mcard') || lock) return;
+      const i = +b.dataset.i; if (open.includes(i) || done[i]) return;
+      open.push(i); b.classList.add('open'); cfg.sound(cards[i].it, cards[i].side);
+      if (open.length < 2) return;
+      tries++; const [x, y] = open; lock = true;
+      if (cards[x].id === cards[y].id) {
+        done[x] = done[y] = turn + 1; sc[turn]++; open = [];
+        later(() => {
+          if (!cheer('good')) beep(true); draw(); hud(); lock = false;
+          if (found() >= pairs) { say(''); return showWin(r, NT > 1 ? winner(NT, sc) : `翻了 ${tries} 次，找到全部 ${pairs} 对！🏆`); }
+          say(NT > 1 ? `${TEAMS[turn][0]}找到一对！⭐ 再翻一次` : '找到一对！⭐');
+        }, 900);
+      } else {
+        hud(); say('不一样，记住它们在哪里 👀');
+        later(() => {
+          open = []; lock = false; if (NT > 1) turn = (turn + 1) % NT;
+          $$('.mcard', r).forEach((m) => { if (!done[+m.dataset.i]) m.classList.remove('open'); });
+          hud(); say(NT > 1 ? `轮到${TEAMS[turn][0]}` : '再翻两张');
+        }, 1700);
+      }
+    });
+    start();
+  }
+  const memoStage = '<div class="ghud"><div class="team-score" id="ts"></div><div class="round" id="rd"></div></div><div class="stagebox"><div class="mgrid" id="grid"></div></div><div class="msg big" id="msg"></div>';
+
   /* ---------- 拼音翻翻乐：翻两张，找出一对 ---------- */
   GAMES.memo = {
     html: () => `${conf(rangeBar(store.get('memoR', 'all'), true),
       optSeg('玩法', 'M', [['pic', '拼音配图片'], ['same', '找相同']], store.get('memoM', 'pic')),
       optSeg('几对', 'N', [[6, '6 对'], [8, '8 对']], store.get('memoN', 6)),
-      optSeg('队伍', 'T', [[1, '个人'], [2, '2 队'], [3, '3 队'], [4, '4 队']], store.get('memoT', 2)))}
-      <div class="ghud"><div class="team-score" id="ts"></div><div class="round" id="rd"></div></div>
-      <div class="stagebox"><div class="mgrid" id="grid"></div></div><div class="msg big" id="msg"></div>`,
+      optSeg('队伍', 'T', [[1, '个人'], [2, '2 队'], [3, '3 队'], [4, '4 队']], store.get('memoT', 2)))}${memoStage}`,
     mount(r) {
-      let range = store.get('memoR', 'all'), M = store.get('memoM', 'pic'), N = store.get('memoN', 6), NT = store.get('memoT', 2);
-      let cards = [], open = [], done = [], sc = [], turn = 0, lock = false, tries = 0, pairs = 0;
+      const pic2 = () => store.get('memoM', 'pic') === 'pic';
+      memoEngine(r, {
+        p: 'memo', defT: 2,
+        items: () => {
+          let P = shuffle(pool(store.get('memoR', 'all'), true));
+          if (pic2()) { const seen = new Set(); P = P.filter(([k, t]) => { const ex = EX[k + t]; if (!ex || seen.has(ex[1])) return false; seen.add(ex[1]); return true; }); }
+          return P;
+        },
+        face: ([k, t], side) => {
+          if (!side || !pic2()) return `<span class="py">${show(k, t)}</span>`;
+          const ex = EX[k + t]; return `<span class="mpic">${pic(ex[1])}</span><small>${esc(ex[0])}</small>`;
+        },
+        sound: ([k, t], side) => { if (side && pic2() && REC.has('w-' + k + t)) playFile('w-' + k + t, () => {}); else recSyl(k, t); },
+        empty: () => (pic2() ? '这一组有图片的录音还不够，试试“找相同”' : '这一组还没有足够的老师录音'),
+      });
+    },
+  };
+
+  /* ================= 汉字游戏 ================= */
+  const hzPy = (c) => (HZ_GAME[c] || HANZI[c] || [''])[0];
+  const hzSay = (c) => { const g = HZ_GAME[c]; if (g && REC.has('hz-' + g[1])) { playFile('hz-' + g[1], () => {}); return true; } return false; };
+  const hzWord = (c) => { const g = HZ_GAME[c]; if (g && REC.has('hzw-' + g[1])) return playFile('hzw-' + g[1], () => {}); hzSay(c); };
+  const hzLearned = () => hzList().seen.filter((c) => HZ_GAME[c]);
+  const TZG = '<svg class="tzg-bg" viewBox="0 0 100 100" aria-hidden="true"><rect x="1" y="1" width="98" height="98"/><path d="M50 1V99M1 50H99M1 1L99 99M99 1L1 99"/></svg>';
+  const STROKE_D = { 横: 'M12 34 H52', 竖: 'M32 10 V56', 撇: 'M44 10 Q38 40 14 54', 捺: 'M16 12 Q30 42 52 52', 点: 'M26 22 L38 38' };
+  const strokeIco = (n) => `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="${STROKE_D[n]}" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/></svg>`;
+  /* 用 Hanzi Writer 的笔画数据画字（不用动画库）：newIdx 那一笔用橙色“变”出来 */
+  const glyph = (d, newIdx) => `<svg class="glyph" viewBox="0 0 1024 1024"><g transform="translate(0, 900) scale(1, -1)">${d.strokes.map((p, i) => `<path d="${p}" class="${i === newIdx ? 'newst' : ''}"/>`).join('')}</g></svg>`;
+
+  /* ---------- 加一笔变魔术 ---------- */
+  GAMES.magic = {
+    html: () => `${conf('', optSeg('字', 'R', [['learned', '学过的字'], ['all', '全部 6 组']], store.get('magR', 'all')),
+      optSeg('队伍', 'T', [[1, '全班'], [2, '2 队'], [3, '3 队'], [4, '4 队']], store.get('magT', 1)))}
+      <div class="ghud"><div class="team-score" id="ts"></div><div class="round" id="rd"></div></div>
+      <div class="stagebox"><div class="magic" id="mg"></div><div class="msg big" id="msg"></div><div class="strk" id="opts"></div><div class="cm-btns" id="ctl"></div></div>`,
+    mount(r) {
+      let R = store.get('magR', 'all'), NT = store.get('magT', 1), list = [], idx = 0, sc = [], turn = 0, tries = 0, lock = false, alive = true;
       const say = (t) => { $('#msg').textContent = t; };
-      const found = () => done.filter(Boolean).length / 2;
-      const hud = () => {
-        $('#ts').innerHTML = NT > 1 ? scoreBoard(NT, sc, turn) : `<span class="tsc on" style="--c:var(--sage-d)">${ic('cards')} 找到 <b>${found()}</b> / ${pairs} 对</span>`;
-        $('#rd').textContent = `翻了 ${tries} 次`;
+      const hud = () => { $('#ts').innerHTML = NT > 1 ? scoreBoard(NT, sc, turn) : ''; $('#rd').textContent = list.length ? `第 ${Math.min(idx + 1, list.length)} / ${list.length} 个` : ''; };
+      const box = (c, html) => `<div class="mg-box"><div class="tzgw">${TZG}<div class="gl">${html}</div></div><div class="mg-cap"><b>${c}</b><span class="py">${hzPy(c)}</span></div></div>`;
+      const draw = async (c, newIdx) => {
+        let html = `<span class="gl-fb">${c}</span>`;
+        try { html = glyph(await HW_DATA(c), newIdx); } catch (e) { /* 没网时显示楷体字 */ }
+        return box(c, html);
       };
-      const face = (c) => {
-        if (c.kind === 's') return `<span class="py">${show(...c.p)}</span>`;
-        const ex = EX[c.p[0] + c.p[1]]; return `<span class="mpic">${pic(ex[1])}</span><small>${esc(ex[0])}</small>`;
+      const ask = async () => {
+        tries = 0; lock = true; const [a, st] = list[idx]; hud(); $('#ctl').innerHTML = '';
+        const h = await draw(a, -1); if (!alive) return; $('#mg').innerHTML = h;
+        const opts = shuffle([st, ...shuffle(Object.keys(STROKE_D).filter((x) => x !== st)).slice(0, 2)]);
+        $('#opts').innerHTML = opts.map((n) => `<button class="sopt" data-s="${n}">${strokeIco(n)}<span>${n}</span></button>`).join('');
+        say(`${NT > 1 ? TEAMS[turn][0] + '：' : ''}“${a}”加哪一笔，会变成一个新字？`); lock = false; hzSay(a);
       };
-      const draw = () => {
-        const g = $('#grid'); g.style.setProperty('--cols', 4);
-        g.innerHTML = cards.map((c, i) => `<button class="mcard ${open.includes(i) || done[i] ? 'open' : ''} ${done[i] ? 'done' : ''} ${c.kind === 'p' ? 'pc2' : ''}" data-i="${i}" ${done[i] ? `style="--c:${NT > 1 ? TEAMS[done[i] - 1][1] : 'var(--sage-d)'}"` : ''}>
-          <span class="mback"><svg viewBox="0 0 240 160"><use href="#yy"/></svg></span><span class="mfront">${face(c)}</span></button>`).join('');
+      const reveal = async (ok) => {
+        lock = true; const [a, st, b, k] = list[idx];
+        $$('.sopt', r).forEach((x) => x.classList.toggle('right', x.dataset.s === st));
+        const h = await draw(b, k); if (!alive) return; $('#mg').innerHTML = h; $('.mg-box', r).classList.add('magic-on');
+        if (ok && NT > 1) sc[turn]++; hud();
+        say(`${ok ? '变！✨ ' : ''}${a} 加一${st}，变成 ${b}`);
+        later(() => { if (!hzSay(b) && ok) beep(true); }, 500); if (ok) later(() => cheer('good'), 1600);
+        $('#ctl').innerHTML = `<button class="go" data-a="next">${ic('arrow-right')}${idx + 1 >= list.length ? '看结果' : '下一个'}</button>`;
       };
       const start = () => {
-        $('.gwin', r)?.remove(); let P = shuffle(pool(range, true));
-        if (M === 'pic') { const seen = new Set(); P = P.filter(([k, t]) => { const ex = EX[k + t]; if (!ex || seen.has(ex[1])) return false; seen.add(ex[1]); return true; }); }
-        open = []; done = []; sc = Array(NT).fill(0); turn = 0; lock = false; tries = 0;
-        if (P.length < 3) { cards = []; pairs = 0; draw(); hud(); return say(M === 'pic' ? '这一组有图片的录音还不够，试试“找相同”' : '这一组还没有足够的老师录音'); }
-        const ps = P.slice(0, N); pairs = ps.length;
-        cards = shuffle(ps.flatMap((p, id) => [{ id, p, kind: 's' }, { id, p, kind: M === 'pic' ? 'p' : 's' }]));
-        draw(); hud(); say(NT > 1 ? `${TEAMS[0][0]}先翻两张` : '翻开两张，找一样的一对');
+        $('.gwin', r)?.remove(); const L = new Set(hzLearned());
+        list = shuffle(HZ_MAGIC.filter(([a, , b]) => R === 'all' || (L.has(a) && L.has(b)))); idx = 0; turn = 0; sc = Array(NT).fill(0);
+        if (!list.length) { $('#mg').innerHTML = ''; $('#opts').innerHTML = ''; hud(); return say('学过的字还不够，先选“全部 6 组”'); }
+        ask();
       };
-      const sound = (c) => { const key = c.p[0] + c.p[1]; if (c.kind === 'p' && REC.has('w-' + key)) playFile('w-' + key, () => {}); else recSyl(...c.p); };
       r.addEventListener('click', (e) => {
         const b = e.target.closest('button'); if (!b) return;
-        if (b.dataset.range) { range = rangeHit(r, b, 'memoR'); return start(); }
-        if (b.dataset.opt) { const v = optHit(r, b), o = b.dataset.opt; store.set('memo' + o, v); if (o === 'M') M = v; if (o === 'N') N = v; if (o === 'T') NT = v; return start(); }
+        if (b.dataset.opt) { const v = optHit(r, b); store.set('mag' + b.dataset.opt, v); if (b.dataset.opt === 'R') R = v; else NT = v; return start(); }
         if (b.id === 'again') return start();
-        if (!b.classList.contains('mcard') || lock) return;
-        const i = +b.dataset.i; if (open.includes(i) || done[i]) return;
-        open.push(i); b.classList.add('open'); sound(cards[i]);
-        if (open.length < 2) return;
-        tries++; const [x, y] = open; lock = true;
-        if (cards[x].id === cards[y].id) {
-          done[x] = done[y] = turn + 1; sc[turn]++; open = [];
-          setTimeout(() => {
-            beep(true); draw(); hud(); lock = false;
-            if (found() >= pairs) { say(''); return $('.stagebox', r).insertAdjacentHTML('beforeend', winBox(NT > 1 ? winner(NT, sc) : `翻了 ${tries} 次，找到全部 ${pairs} 对！🏆`)); }
-            say(NT > 1 ? `${TEAMS[turn][0]}找到一对！⭐ 再翻一次` : '找到一对！⭐');
-          }, 700);
-        } else {
-          hud(); say('不一样，记住它们在哪里 👀');
-          setTimeout(() => {
-            open = []; lock = false; if (NT > 1) turn = (turn + 1) % NT;
-            $$('.mcard', r).forEach((m) => { if (!done[+m.dataset.i]) m.classList.remove('open'); });
-            hud(); say(NT > 1 ? `轮到${TEAMS[turn][0]}` : '再翻两张');
-          }, 1700);
+        if (b.dataset.a === 'next') {
+          idx++; if (NT > 1) turn = (turn + 1) % NT;
+          if (idx >= list.length) { $('#opts').innerHTML = ''; $('#ctl').innerHTML = ''; say(''); hud(); return showWin(r, NT > 1 ? winner(NT, sc) : `${list.length} 个魔术都变完啦！✨`); }
+          return ask();
+        }
+        if (!b.dataset.s || lock) return;
+        if (b.dataset.s === list[idx][1]) return reveal(true);
+        tries++; b.classList.add('wrong'); if (!cheer('try')) beep(false);
+        if (tries >= 2) return reveal(false);
+        say('不是这一笔哦，再想想 🤔');
+      });
+      start();
+      return () => { alive = false; };
+    },
+  };
+
+  /* ---------- 象形字配对：图片和汉字是一对 ---------- */
+  GAMES.xiang = {
+    html: () => `${conf('', optSeg('几对', 'N', [[6, '6 对'], [8, '8 对']], store.get('xiangN', 6)),
+      optSeg('队伍', 'T', [[1, '个人'], [2, '2 队'], [3, '3 队'], [4, '4 队']], store.get('xiangT', 2)))}${memoStage}`,
+    mount(r) {
+      memoEngine(r, {
+        p: 'xiang', defT: 2,
+        items: () => shuffle(Object.keys(HZ_GAME).filter((c) => HZ_GAME[c][2])),
+        face: (c, side) => (side ? `<span class="mpic">${pic(HZ_GAME[c][2])}</span>` : `<span class="hzc2">${c}</span><small class="py">${HZ_GAME[c][0]}</small>`),
+        sound: (c, side) => (side ? hzWord(c) : hzSay(c)),
+        empty: () => '象形字还不够',
+      });
+    },
+  };
+
+  /* ---------- 笔顺接力：每队轮流写一笔 ---------- */
+  GAMES.relay = {
+    html: () => `${conf('', optSeg('字', 'R', [['learned', '学过的字'], ['all', `全部 ${Object.keys(HZ_GAME).length} 个`]], store.get('relR', 'learned')),
+      optSeg('队伍', 'T', [[2, '2 队'], [3, '3 队'], [4, '4 队']], store.get('relT', 2)))}
+      <div class="gplay"><div class="stagebox"><div class="relay"><div class="tzg rl-tzg">${TZG.replace('tzg-bg', '')}<div id="rhw"></div></div><div class="rl-chars" id="chars"></div></div></div>
+        <aside class="gside"><div class="team-score col" id="ts"></div><div class="gpanel" id="fp"></div><div class="msg" id="msg"></div></aside></div>`,
+    mount(r) {
+      let R = store.get('relR', 'learned'), NT = store.get('relT', 2), list = [], ci = 0, sc = [], turn = 0, sn = 0, missed = false, w = null, alive = true, over = false;
+      const say = (t) => { $('#msg').textContent = t; };
+      const names = (c) => (HANZI[c] || [])[1] || [];
+      const hud = () => {
+        $('#ts').innerHTML = scoreBoard(NT, sc, over ? -1 : turn);
+        $('#chars').innerHTML = list.map((c, i) => `<span class="${i < ci ? 'done' : i === ci ? 'on' : ''}">${c}</span>`).join('');
+      };
+      const panel = (doneChar) => {
+        const c = list[ci], n = names(c);
+        $('#fp').innerHTML = doneChar
+          ? `<div class="jq big">写好啦！</div><div class="hzbig">${c}</div><div class="py jpy">${hzPy(c)}</div>
+             <button class="go" data-a="next">${ic('arrow-right')}${ci + 1 >= list.length ? '看结果' : '下一个字'}</button>`
+          : `<div class="jq big"><span class="tdot" style="--c:${TEAMS[turn][1]}"></span>${TEAMS[turn][0]}<br>写第 ${sn + 1} 笔${n[sn] ? `：<b>${n[sn]}</b>` : ''}</div>
+             <div class="py jpy">${c} · ${hzPy(c)}</div><button class="go ghost" data-a="demo">${ic('player-play')}看一遍笔顺</button>`;
+      };
+      const quiz = () => {
+        sn = 0; missed = false; w.showOutline(); w.hideCharacter();
+        w.quiz({
+          showHintAfterMisses: 1,
+          onMistake: () => { missed = true; say('不对哦，看橙色的提示再写'); },
+          onCorrectStroke: (d) => {
+            if (!missed) { sc[turn]++; beep(true); say(`${TEAMS[turn][0]} +1 ⭐`); } else say('写对了，这一笔不加分');
+            missed = false; sn = d.strokeNum + 1; turn = (turn + 1) % NT; hud(); if (sn < d.strokeNum + 1 + d.strokesRemaining) panel();
+          },
+          onComplete: () => { hud(); panel(true); later(() => { if (!hzSay(list[ci])) cheer('good'); }, 400); },
+        });
+        hud(); panel(); say(`${TEAMS[turn][0]}先写`);
+      };
+      const load = async () => {
+        const c = list[ci];
+        if (!w) {
+          await loadHW(); if (!alive) return; const box = $('#rhw'), size = box.clientWidth || 360;
+          w = HanziWriter.create(box, c, { width: size, height: size, padding: size * 0.08, showOutline: true, showCharacter: false, strokeColor: '#1F2A44', outlineColor: '#E4DED3',
+            highlightColor: '#D9734E', drawingColor: '#D9734E', drawingWidth: 34, strokeAnimationSpeed: 0.9, delayBetweenStrokes: 350,
+            charDataLoader: (ch, ok, no) => HW_DATA(ch).then(ok).catch(no) });
+        } else await w.setCharacter(c);
+        if (alive) quiz();
+      };
+      const start = () => {
+        $('.gwin', r)?.remove(); over = false;
+        list = shuffle(R === 'all' ? Object.keys(HZ_GAME) : hzLearned()); ci = 0; turn = 0; sc = Array(NT).fill(0);
+        if (!list.length) { say('还没有学过的字'); return; }
+        load().catch(() => say('笔顺数据加载不了，请检查网络'));
+      };
+      r.addEventListener('click', (e) => {
+        const b = e.target.closest('button'); if (!b) return;
+        if (b.dataset.opt) { const v = optHit(r, b); store.set('rel' + b.dataset.opt, v); if (b.dataset.opt === 'R') R = v; else NT = v; return start(); }
+        if (b.id === 'again') return start();
+        if (b.dataset.a === 'demo' && w) { w.cancelQuiz(); w.hideCharacter(); say('看老师写一遍'); return w.animateCharacter({ onComplete: () => { if (alive) later(quiz, 500); } }); }
+        if (b.dataset.a === 'next') {
+          ci++;
+          if (ci >= list.length) { over = true; hud(); $('#fp').innerHTML = ''; say(''); return showWin(r, winner(NT, sc)); }
+          load();
         }
       });
       start();
+      return () => { alive = false; };
     },
   };
+
+  /* 老师录的鼓励语（可选）：录了就播，没录就用“叮”声。文件名见 audio/游戏录音建议.md */
+  const FB = { good: ['fb-zhenbang', 'fb-dadui', 'fb-lihai'], try: ['fb-zaishi', 'fb-jiayou'], win: ['fb-ying'], poison: ['fb-zhongdu'], gone: ['fb-shei'] };
+  const cheer = (kind) => { const l = (FB[kind] || []).filter((n) => REC.has(n)); if (!l.length) return false; playFile(pick(l), () => {}); return true; };
+  const showWin = (r, txt, btn) => { $('.stagebox', r).insertAdjacentHTML('beforeend', winBox(txt, btn)); if (!cheer('win')) beep(true); };
 
   /* ---------- 拼音连三子：读对了占一格，先连成三个的队赢 ---------- */
   GAMES.line = {
@@ -1023,7 +1195,7 @@
         cells = cycle(P, S * S); draw(); panel(); say('');
       };
       const next = () => { sel = -1; turn = (turn + 1) % NT; busy = false; draw(); panel(); say(''); };
-      const end = (txt) => { over = true; draw(); $('#fp').innerHTML = ''; say(''); beep(true); $('.stagebox', r).insertAdjacentHTML('beforeend', winBox(txt)); };
+      const end = (txt) => { over = true; draw(); $('#fp').innerHTML = ''; say(''); showWin(r, txt); };
       r.addEventListener('click', (e) => {
         const b = e.target.closest('button'); if (!b) return;
         if (b.dataset.range) { range = rangeHit(r, b, 'lineR'); return start(); }
@@ -1035,13 +1207,13 @@
         const c = cells[sel];
         if (b.dataset.j === 'ear') return recSyl(...c);
         if (b.dataset.j === 'yes') {
-          busy = true; own[sel] = turn + 1; beep(true); setTimeout(() => recSyl(...c), 300);
+          busy = true; own[sel] = turn + 1; beep(true); later(() => recSyl(...c), 300);
           const got = line(sel); sel = -1; draw();
-          if (got) { wl = got; return setTimeout(() => end(`${TEAMS[turn][0]}连成三个，赢啦！🏆`), 900); }
-          if (own.filter(Boolean).length >= cells.length) return setTimeout(() => end(`格子占满啦！${winner(NT, counts())}`), 900);
-          say(`${TEAMS[turn][0]}占下一格 ⭐`); setTimeout(next, 1300);
+          if (got) { wl = got; return later(() => end(`${TEAMS[turn][0]}连成三个，赢啦！🏆`), 900); }
+          if (own.filter(Boolean).length >= cells.length) return later(() => end(`格子占满啦！${winner(NT, counts())}`), 900);
+          say(`${TEAMS[turn][0]}占下一格 ⭐`); later(next, 1300);
         }
-        if (b.dataset.j === 'no') { busy = true; recSyl(...c); say('听老师读一遍，这一格先空着'); setTimeout(next, 1800); }
+        if (b.dataset.j === 'no') { busy = true; recSyl(...c); say('听老师读一遍，这一格先空着'); later(next, 1800); }
       });
       start();
     },
@@ -1053,6 +1225,7 @@
     ['listen', '听音选择', 'Lyt og vælg', 'mustard', 'ear', '听老师的录音，选出对的拼音'],
     ['memory', '记忆游戏', 'Hukommelse', 'blue', 'brain', '看一看、记一记，第三节课也不累'],
     ['spell', '拼一拼', 'Stav', 'sage', 'puzzle', '声母和韵母碰一碰，认识声母车站'],
+    ['hanzi', '汉字游戏', 'Kinesiske tegn', 'lilac', 'writing', '认字、写字，从象形字开始'],
   ];
   const GAME_LIST = [
     { id: 'poison', cat: 'team', icon: 'flask', name: '拼音毒药', fresh: 1, tags: ['2–4 队'], desc: '先读再翻，小心翻到毒药！', rule: '读出卡片上的拼音再点开：安全卡 +1，毒药 −2。' },
@@ -1064,14 +1237,17 @@
     { id: 'memo', cat: 'memory', icon: 'cards', name: '拼音翻翻乐', fresh: 1, tags: ['个人 / 2–4 队'], desc: '翻两张牌，找出拼音和图片的一对。', rule: '每次翻两张，一样的一对就得分，还能再翻一次；不一样就翻回去，换下一队。' },
     { id: 'peng', cat: 'spell', icon: 'puzzle', name: '碰一碰', tags: ['老师演示'], desc: '声母加韵母，看看能不能拼。', rule: '点一个声母和一个韵母，按“碰！”看能不能拼在一起。' },
     { id: 'post', cat: 'spell', icon: 'mail', name: '拼音小邮差', tags: ['个人'], desc: '看拼音和图，把信送到声母车站。', rule: '看拼音和图片，把信送到它的声母车站。' },
+    { id: 'magic', cat: 'hanzi', icon: 'wand', name: '加一笔变魔术', fresh: 1, tags: ['全班 / 2–4 队'], desc: '给字加一笔，变出一个新字！', rule: '看看这个字加哪一笔会变成新字：人 + 横 = 大。选对了，新的一笔会变出来。' },
+    { id: 'xiang', cat: 'hanzi', icon: 'sun', name: '象形字配对', fresh: 1, tags: ['个人 / 2–4 队'], desc: '太阳和“日”是一对，翻牌找出来。', rule: '每次翻两张，图片和它的象形字是一对。找到一对得分，还能再翻一次。' },
+    { id: 'relay', cat: 'hanzi', icon: 'pencil', name: '笔顺接力', fresh: 1, tags: ['2–4 队'], desc: '每队轮流写一笔，接力写完一个字。', rule: '在田字格里按笔顺写，每队轮流写一笔。一次写对 +1 分，写错会出现橙色提示。' },
   ];
   const catOf = (g) => GAME_CATS.find((c) => c[0] === g.cat);
   V.games = (sub) => {
     if (!GAMES[sub]) {
       const tile = (g) => { const c = catOf(g); return `<a class="gtile k-${c[3]}" href="#games/${g.id}" data-cat="${g.cat}">
-        <div class="gt-top"><span class="gico">${ic(g.icon)}</span><span class="gt-cat">${c[1]}</span>${g.fresh ? '<span class="gnew">NEW</span>' : ''}</div>
+        <div class="gt-cover">${(window.GAME_ART || {})[g.id] || ''}</div><div class="gt-top"><span class="gt-cat">${ic(g.icon)}${c[1]}</span>${g.fresh ? '<span class="gnew">NEW</span>' : ''}</div>
         <h3>${g.name}</h3><p>${g.desc}</p><div class="gt-foot"><div class="gt-tags">${g.tags.map((t) => `<span>${ic('users')}${t}</span>`).join('')}</div><span class="gt-go">${ic('arrow-right')}</span></div></a>`; };
-      return `<section><div class="sec"><h2>拼音游戏</h2><small>${GAME_LIST.length} 个游戏 · 游戏里只播放老师的录音 · Lyt, læs og leg</small></div>
+      return `<section><div class="sec"><h2>游戏</h2><small>${GAME_LIST.length} 个游戏 · 只播放老师的录音 · Lyt, læs og leg</small></div>
         <div class="gfilter"><button class="sel" data-cat="">${ic('layout-grid')}全部 <b>${GAME_LIST.length}</b></button>${GAME_CATS.map((c) => `<button class="k-${c[3]}" data-cat="${c[0]}" title="${c[5]}">${ic(c[4])}${c[1]} <b>${GAME_LIST.filter((g) => g.cat === c[0]).length}</b></button>`).join('')}</div>
         <div class="ghub">${GAME_LIST.map(tile).join('')}</div></section>`;
     }
@@ -1186,6 +1362,7 @@
     let [name, sub] = (location.hash.slice(1) || 'home').split('/');
     if (window.ONLY) { sub = (name === window.ONLY && sub) ? sub : window.ONLY_SUB; name = window.ONLY; }
     const v = V[name] || V.home;
+    TIMERS.splice(0).forEach(clearTimeout);
     if (typeof cleanup === 'function') cleanup(); cleanup = null;
     const main = $('#main'), fresh = main.cloneNode(false); main.replaceWith(fresh);
     fresh.appendChild(frag(v(sub)));
