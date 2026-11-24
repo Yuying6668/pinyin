@@ -1,0 +1,212 @@
+/* 界面翻译：'中文': ['Dansk', 'English']
+   只翻译网站界面（按钮、说明、游戏提示）。拼音、汉字、例词、每周课程内容一直是中文。
+   {0} {1} 是会被换成数字、拼音或队名的位置。翻译成 '' = 这种语言里不显示。
+   想改某句翻译，直接改这里就行。 */
+window.I18N = {
+  /* 页头、页脚 */
+  '首页': ['Forside', 'Home'], '课堂': ['Undervisning', 'Class'], '游戏': ['Spil', 'Games'], '拼音表': ['Pinyin-tavle', 'Pinyin chart'],
+  '汉字': ['Tegn', 'Characters'], '家长': ['Forældre', 'Parents'], '资源库': ['Materialer', 'Resources'],
+  '游戏播放老师录音 · 其他读音以老师课上为准': ['Spillene bruger lærerens egne optagelser · ellers gælder lærerens udtale i timen', 'Games use the teacher\'s own recordings · otherwise follow the teacher\'s pronunciation in class'],
+  '拼音识字班B': ['Pinyin-klasse B', 'Pinyin class B'],
+  '语言': ['Sprog', 'Language'],
+  '读音暂用浏览器朗读，以老师课上读音为准': ['Udtalen læses foreløbig op af browseren – følg lærerens udtale i timen', 'Pronunciation is read by the browser for now – follow the teacher in class'],
+
+  /* 通用 */
+  '全部学过的': ['Alt vi har lært', 'Everything learned'], '单韵母 a o e i u ü': ['Enkle finaler a o e i u ü', 'Simple finals a o e i u ü'],
+  '比一比 zh/j ch/q sh/x r/l': ['Sammenlign zh/j ch/q sh/x r/l', 'Compare zh/j ch/q sh/x r/l'],
+  '这个浏览器不能朗读，请用 Safari 或 Chrome': ['Denne browser kan ikke læse op – brug Safari eller Chrome', 'This browser can\'t read aloud – please use Safari or Chrome'],
+  '这个声调还没有录音': ['Denne tone er ikke optaget endnu', 'This tone hasn\'t been recorded yet'],
+  '动作：': ['Bevægelse: ', 'Action: '], '关闭': ['Luk', 'Close'],
+  '读一读 · Lyt': ['Lyt', 'Listen'], '读一读': ['Lyt', 'Listen'], '读': ['Lyt', 'Listen'],
+  '小 ü 见了 j q x，去掉两点还读 ü': ['Når ü møder j q x, fjerner vi prikkerne – den udtales stadig ü', 'When ü meets j q x, the dots go away – it still sounds like ü'],
+  '小 ü 见了 n l，两点不能丢': ['Når ü møder n l, bliver prikkerne', 'When ü meets n l, the dots stay'],
+  '要整个读，i 不读成“衣”': ['læses som én lyd – i lyder ikke som „yi“', 'is read as one sound – the i is not "yi"'],
+  '点一张卡片听读音 · Tryk og lyt': ['Tryk på et kort for at lytte', 'Tap a card to listen'],
+  '单韵母': ['Enkle finaler', 'Simple finals'], ' · 最新': [' · nyeste', ' · newest'], '下一站': ['Næste station', 'Next stop'],
+  '全屏': ['Fuld skærm', 'Full screen'],
+  '红队': ['Rødt hold', 'Red team'], '黄队': ['Gult hold', 'Yellow team'], '蓝队': ['Blåt hold', 'Blue team'], '绿队': ['Grønt hold', 'Green team'],
+  '音节': ['Stavelser', 'Syllables'], '声母': ['Initialer', 'Initials'], '韵母': ['Finaler', 'Finals'],
+
+  /* 首页 */
+  '和小Y一起，飞过每一个拼音站。': ['Flyv med lille Y gennem alle pinyin-stationerne.', 'Fly with little Y through every pinyin station.'],
+  '课堂上投影，回家也能练。': ['Vis det på storskærm i timen – og øv derhjemme.', 'Project it in class – and practise at home.'],
+  '开始上课': ['Start timen', 'Start class'], '家长专区': ['For forældre', 'For parents'], '小Y': ['Lille Y', 'Little Y'],
+  '下一次课 · Næste time': ['Næste time', 'Next class'], '今天想做什么？': ['Hvad skal vi lave i dag?', 'What shall we do today?'],
+  'Hvad skal vi lave i dag?': ['', ''],
+  '老师 · LÆRER': ['LÆRER', 'TEACHER'], '投影用的大字闪卡、分组和计时工具。': ['Store flashcards, holddeling og timer til storskærmen.', 'Big flashcards, team picker and timer for the projector.'],
+  '闪卡': ['Flashcards', 'Flashcards'], '随机分组 · 小组积分': ['Holddeling · Point', 'Team picker · Scores'], '拼音转盘 · 倒计时': ['Pinyin-hjul · Timer', 'Pinyin wheel · Timer'],
+  '进入课堂': ['Til undervisningen', 'Go to class'], '小朋友 · BØRN': ['BØRN', 'KIDS'], '听一听、拼一拼，在游戏里练拼读。': ['Lyt, stav og øv pinyin gennem leg.', 'Listen, spell and practise pinyin through play.'],
+  '去玩游戏': ['Til spillene', 'Play games'], '家长 · FORÆLDRE': ['FORÆLDRE', 'PARENTS'],
+  '每周学了什么、在家怎么陪练、作业下载。': ['Hvad vi lærte, hvordan I øver hjemme, og lektier til download.', 'What we learned, how to practise at home, and homework downloads.'],
+  '每周课程': ['Ugens timer', 'Weekly lessons'], '查看本周': ['Se denne uge', 'See this week'],
+  '已经飞过的拼音站': ['Stationer vi har fløjet forbi', 'Stations we\'ve flown past'], '点字母看卡片 · Tryk på et bogstav': ['Tryk på et bogstav', 'Tap a letter'],
+
+  /* 拼音表 */
+  'ü 去两点': ['ü uden prikker', 'ü loses dots'], '整个读': ['én lyd', 'one sound'], '轻声': ['neutral tone', 'neutral tone'], '不碰': ['findes ikke', 'not valid'],
+  '打印版 PDF': ['PDF til print', 'Printable PDF'],
+  '点音节：四个声调的例词和图片 · 点声母：看拼音卡片': ['Tryk på en stavelse: eksempelord og billeder for de fire toner · Tryk på en initial: se bogstavkortet', 'Tap a syllable: example words and pictures for all four tones · Tap an initial: see the letter card'],
+  '{0} 只和 {1} 碰，不和 {2} 碰': ['{0} går kun sammen med {1}, ikke med {2}', '{0} only combine with {1}, not with {2}'],
+  '{0} 只和 {1} 碰，ü 去掉两点还读 ü': ['{0} går kun sammen med {1} – ü mister prikkerne, men lyder stadig ü', '{0} only combine with {1} – ü loses its dots but still sounds like ü'],
+  '{0} 和 ü 碰，两点不能丢：{1}': ['{0} kan stå med ü, og prikkerne bliver: {1}', '{0} can go with ü, and the dots stay: {1}'],
+  '{0} 不和 {1} 碰；{2} 不和 {3} 碰': ['{0} går ikke med {1}; {2} går ikke med {3}', '{0} doesn\'t go with {1}; {2} don\'t go with {3}'],
+  '{0} 舌头翘起来；和 g k h 一样，不和 {1} 碰': ['{0}: tungen krølles op; ligesom g k h går de ikke med {1}', '{0}: curl the tongue up; like g k h they don\'t go with {1}'],
+  '{0} 整个读，i 不读成“衣”': ['{0} læses som én lyd – i lyder ikke som „yi“', '{0} are read as one sound – the i is not "yi"'],
+
+  /* 课堂工具 */
+  '随机分组': ['Holddeling', 'Team picker'], '小组积分': ['Point', 'Scores'], '拼音转盘': ['Pinyin-hjul', 'Pinyin wheel'], '倒计时': ['Timer', 'Timer'],
+  '按 空格 换下一张 · 按 回车 朗读': ['Mellemrum = næste kort · Enter = læs op', 'Space = next card · Enter = read aloud'],
+  '下一张': ['Næste', 'Next'], '看例词': ['Se eksempelord', 'Example words'], '切换到“音节”再看例词': ['Skift til „Stavelser“ for at se eksempelord', 'Switch to "Syllables" to see example words'],
+  '现在只有 {0} 组，没有{1}，{2} 放在{3}': ['Der er kun {0} hold og intet {1} – {2} kommer på {3}', 'There are only {0} teams and no {1} – {2} goes to {3}'],
+  '标了“分开”的有 {0} 人，但只有 {1} 组，有人只能同组': ['{0} er markeret „adskil“, men der er kun {1} hold – nogle må være sammen', '{0} are marked "separate", but there are only {1} teams – some must share'],
+  '名字（每行一个，只保存在这台电脑上，不会上传）': ['Navne (ét pr. linje – gemmes kun på denne computer, uploades ikke)', 'Names (one per line – saved only on this computer, never uploaded)'],
+  '不写名字也可以：用下面的人数，按号码分组': ['Uden navne: holdene deles efter numre ud fra antallet nedenfor', 'No names? Teams are made by number using the count below'],
+  '人数': ['Antal', 'Count'], '分成': ['Del i', 'Split into'], '2 组': ['2 hold', '2 teams'], '3 组': ['3 hold', '3 teams'], '4 组': ['4 hold', '4 teams'],
+  '{0} 号': ['Nr. {0}', 'No. {0}'], '队伍数': ['Antal hold', 'Teams'], '清零': ['Nulstil', 'Reset'], '号码': ['Numre', 'Numbers'], '转一转': ['Drej', 'Spin'],
+  '分钟': ['min', 'min'], '开始': ['Start', 'Start'], '重来': ['Forfra', 'Restart'], '暂停': ['Pause', 'Pause'],
+
+  /* 游戏共用 */
+  '游戏设置': ['Indstillinger', 'Settings'], '点这里收起 / 打开': ['Klik for at skjule / vise', 'Click to hide / show'],
+  '个人': ['Alene', 'Solo'], ' 队': [' hold', ' teams'], '队伍': ['Hold', 'Teams'], '2 队': ['2 hold', '2 teams'], '3 队': ['3 hold', '3 teams'], '4 队': ['4 hold', '4 teams'],
+  '2–4 队': ['2–4 hold', '2–4 teams'], '个人 / 2–4 队': ['Alene / 2–4 hold', 'Solo / 2–4 teams'], '全班 / 2–4 队': ['Hele klassen / 2–4 hold', 'Whole class / 2–4 teams'], '全班': ['Hele klassen', 'Whole class'],
+  '平局！每个队都很棒 🎉': ['Uafgjort! Alle hold var super 🎉', 'A tie! Every team was great 🎉'], '并列第一！🏆': [' deler førstepladsen! 🏆', ' share first place! 🏆'], '赢啦！🏆': [' vinder! 🏆', ' wins! 🏆'],
+  '再听一次': ['Hør igen', 'Listen again'], '第 {0} / {1} 轮': ['Runde {0} / {1}', 'Round {0} / {1}'], '，仔细听！': [', lyt godt efter!', ', listen carefully!'],
+  '这一组还没有老师的录音': ['Der er ingen optagelser fra læreren i denne gruppe endnu', 'No teacher recordings in this group yet'],
+  '这一组还没有足够的老师录音': ['Der er ikke nok optagelser fra læreren i denne gruppe endnu', 'Not enough teacher recordings in this group yet'],
+  '再玩一次': ['Spil igen', 'Play again'], '听老师读': ['Hør læreren', 'Hear the teacher'], '读对了': ['Rigtigt læst', 'Read correctly'], '没读对': ['Ikke rigtigt', 'Not quite'],
+  '下一个': ['Næste', 'Next'], '看结果': ['Se resultatet', 'See results'],
+
+  /* 拼音打地鼠 */
+  '打中啦！⭐': ['Ramt! ⭐', 'Hit! ⭐'], '是 {0}，换下一队！': ['Det var {0} – næste hold!', 'It was {0} – next team!'], '不对哦，再听一次 👂': ['Ikke helt – lyt igen 👂', 'Not quite – listen again 👂'],
+
+  /* 碰一碰 */
+  'zh ch sh r 和 g k h 一样，不和 ü 做朋友': ['zh ch sh r er ligesom g k h ikke venner med ü', 'zh ch sh r, like g k h, are not friends with ü'],
+  '{0} 和 {1} 不能拼在一起': ['{0} og {1} kan ikke sættes sammen', '{0} and {1} can\'t go together'],
+  'g k h 不和 i、ü 做朋友': ['g k h er ikke venner med i og ü', 'g k h are not friends with i and ü'], 'j q x 只和 i、ü 做朋友': ['j q x er kun venner med i og ü', 'j q x are only friends with i and ü'],
+  'f 不和 i 做朋友': ['f er ikke ven med i', 'f is not friends with i'],
+  '不和 ü 做朋友（只有 n l 和 j q x 能和 ü 碰）': [' er ikke ven med ü (kun n l og j q x kan stå med ü)', ' is not friends with ü (only n l and j q x can go with ü)'],
+  '点一个声母，再点一个韵母，按“碰！”': ['Vælg en initial og en final, og tryk „Bang!“', 'Pick an initial and a final, then press "Bang!"'],
+  '碰！': ['Bang!', 'Bang!'], '随机': ['Tilfældig', 'Random'], '先选一个声母和一个韵母': ['Vælg først en initial og en final', 'Pick an initial and a final first'],
+  'ü 遇到 {0}，去掉两点：': ['ü møder {0} og mister prikkerne: ', 'ü meets {0} and loses its dots: '],
+  '看例词和图片': ['Se eksempelord og billeder', 'See example words and pictures'], '能拼，这个音节一般读轻声。': ['Det går – stavelsen udtales normalt med neutral tone.', 'It works – this syllable is usually in the neutral tone.'],
+  '🙅 不碰！': ['🙅 Findes ikke!', '🙅 Not a match!'],
+
+  /* 听音找飞机 */
+  '这台设备上一共得到': ['Stjerner samlet på denne enhed:', 'Stars collected on this device:'], '颗星星': ['', ''],
+  '先飞到终点，赢啦！🏆': [' nåede først i mål og vinder! 🏆', ' reached the finish first and wins! 🏆'], '飞到终点啦！': ['I mål!', 'You made it to the finish!'],
+  '再飞一次': ['Flyv igen', 'Fly again'], '前进一格！✈️': [' flyver et felt frem! ✈️', ' moves one square! ✈️'], '答对啦，但这次不前进': ['Rigtigt – men ingen flyvetur denne gang', 'Correct – but no move this time'],
+  '是 {0}，听一听': ['Det var {0} – lyt efter', 'It was {0} – listen'], '再听一次，仔细听 👂': ['Lyt igen, lyt godt efter 👂', 'Listen again, carefully 👂'],
+
+  /* 拼音小邮差 */
+  '看拼音和图，把信送到它的声母车站 · Bring brevet til den rigtige station': ['Se pinyin og billedet, og bring brevet til den rigtige station', 'Look at the pinyin and the picture, and deliver the letter to the right station'],
+  '再学几个声母就能玩啦': ['Lær et par initialer mere, så kan I spille', 'Learn a few more initials to play'], '站': ['station', 'station'],
+  '这封信送到哪个车站？': ['Hvilken station skal brevet til?', 'Which station does this letter go to?'], '听一听': ['Lyt', 'Listen'],
+  '第 {0} / {1} 封信': ['Brev {0} / {1}', 'Letter {0} / {1}'], '送完 {0} 封信，得到 {1} 颗星！🏆': ['{0} breve leveret – {1} stjerner! 🏆', '{0} letters delivered – {1} stars! 🏆'],
+  '再送一次': ['Bring breve igen', 'Deliver again'], '送到啦！{0} 是 {1} 开头的 ⭐': ['Leveret! {0} starter med {1} ⭐', 'Delivered! {0} starts with {1} ⭐'],
+  '{0} 的声母是 {1}，送到这里哦': ['{0} starter med {1} – den skal herhen', '{0} starts with {1} – it goes here'], '再看看，{0} 的声母是谁？': ['Kig igen – hvad starter {0} med?', 'Look again – what does {0} start with?'],
+
+  /* 拼音毒药 */
+  '毒药': ['Gift', 'Poison'], '1 瓶': ['1 flaske', '1 bottle'], '2 瓶': ['2 flasker', '2 bottles'], '3 瓶': ['3 flasker', '3 bottles'],
+  '谁来下毒': ['Hvem gemmer giften', 'Who hides the poison'], '电脑': ['Computeren', 'Computer'], '老师': ['Læreren', 'Teacher'],
+  '还有 {0} 张安全卡': ['{0} sikre kort tilbage', '{0} safe cards left'], '电脑偷偷放好了': ['Computeren har gemt', 'The computer has hidden'], '瓶毒药 🤫': ['flasker gift 🤫', 'bottles of poison 🤫'],
+  '先来：先读，再翻！': [' starter: læs først, vend så!', ' goes first: read, then flip!'],
+  '🙈 小朋友闭上眼睛！老师点': ['🙈 Luk øjnene! Læreren vælger', '🙈 Close your eyes! The teacher picks'], '张卡放毒药': ['kort med gift', 'poison cards'],
+  '毒药放好啦！睁开眼睛 👀': ['Giften er gemt! Åbn øjnene 👀', 'The poison is hidden! Open your eyes 👀'], '🙈 还要放 {0} 瓶': ['🙈 {0} flasker mere', '🙈 {0} more to hide'],
+  '☠️ 哎呀！': ['☠️ Åh nej! ', '☠️ Oh no! '], '中毒了，扣 2 分': [' er forgiftet – minus 2 point', ' got poisoned – minus 2 points'], '：先读，再翻！': [': læs først, vend så!', ': read first, then flip!'],
+
+  /* 拼音不见了 */
+  '卡片': ['Kort', 'Cards'], '张数': ['Antal kort', 'Number'], '4 张': ['4', '4'], '6 张': ['6', '6'], '9 张': ['9', '9'],
+  '记忆时间': ['Huske-tid', 'Memory time'], '3 秒': ['3 sek', '3 s'], '5 秒': ['5 sek', '5 s'], '8 秒': ['8 sek', '8 s'],
+  '位置': ['Placering', 'Positions'], '不动': ['Fast', 'Fixed'], '打乱': ['Bland', 'Shuffle'],
+  '这一组还没有足够的卡片（或老师录音）': ['Ikke nok kort (eller optagelser) i denne gruppe', 'Not enough cards (or recordings) in this group'],
+  '看一看，准备好了就按「开始」': ['Kig godt – tryk „Start“, når I er klar', 'Have a look – press "Start" when you\'re ready'],
+  '：谁不见了？': [': hvem er forsvundet?', ': which one is missing?'], '谁不见了？🤔': ['Hvem er forsvundet? 🤔', 'Which one is missing? 🤔'],
+  '是 {0}！': ['Det var {0}!', 'It was {0}!'],
+  '揭晓答案': ['Vis svaret', 'Show answer'], '记住它们！👀': ['Husk dem! 👀', 'Remember them! 👀'], '答对了 +1': ['Rigtigt +1', 'Correct +1'], '没答对': ['Forkert', 'Wrong'], '下一轮': ['Næste runde', 'Next round'],
+
+  /* 拼音飞行棋 */
+  '跑道': ['Bane', 'Track'], '短 · 18 格': ['Kort · 18 felter', 'Short · 18 squares'], '长 · 24 格': ['Lang · 24 felter', 'Long · 24 squares'],
+  '起点': ['Start', 'Start'], '终点': ['Mål', 'Finish'], '前进 2 格': ['2 frem', '2 forward'], '后退 2 格': ['2 tilbage', '2 back'], '格': ['', ''],
+  '掷骰子': ['Slå', 'Roll'], '也可以按空格键': ['eller tryk på mellemrum', 'or press the space bar'], '掷骰子！': [' slår med terningen!', ' rolls the dice!'],
+  '{0} 点': ['{0} øjne', 'Rolled {0}'], '⭐ 幸运星！再前进 2 格': ['⭐ Lykkestjerne! 2 felter frem', '⭐ Lucky star! 2 squares forward'],
+  '🌪️ 大风来了！后退 2 格': ['🌪️ Storm! 2 felter tilbage', '🌪️ Windstorm! 2 squares back'], '先读出来，老师再判断': ['Læs højt først – så bedømmer læreren', 'Read it aloud – then the teacher decides'],
+  '读对了！停在这里 ✈️': ['Rigtigt! Flyet bliver her ✈️', 'Correct! The plane stays here ✈️'], '听一听老师怎么读，飞回原来的位置': ['Lyt til læreren – flyet flyver tilbage', 'Listen to the teacher – the plane flies back'],
+
+  /* 翻翻乐 */
+  '找到 {0} / {1} 对': ['{0} / {1} par fundet', '{0} / {1} pairs found'], '翻了 {0} 次': ['{0} forsøg', '{0} tries'], '先翻两张': [' vender to kort først', ' flips two cards first'],
+  '翻开两张，找出一对': ['Vend to kort og find et par', 'Flip two cards to find a pair'], '翻了 {0} 次，找到全部 {1} 对！🏆': ['Alle {1} par fundet på {0} forsøg! 🏆', 'All {1} pairs found in {0} tries! 🏆'],
+  '找到一对！⭐ 再翻一次': [' fandt et par! ⭐ Vend igen', ' found a pair! ⭐ Go again'], '找到一对！⭐': ['Et par! ⭐', 'A pair! ⭐'],
+  '不一样，记住它们在哪里 👀': ['Ikke ens – husk hvor de ligger 👀', 'Not a match – remember where they are 👀'], '轮到{0}': ['{0} er på', '{0}\'s turn'], '再翻两张': ['Vend to kort mere', 'Flip two more'],
+  '玩法': ['Spil', 'Mode'], '拼音配图片': ['Pinyin + billede', 'Pinyin + picture'], '找相同': ['Find ens', 'Find the same'],
+  '几对': ['Par', 'Pairs'], '6 对': ['6 par', '6 pairs'], '8 对': ['8 par', '8 pairs'],
+  '这一组有图片的录音还不够，试试“找相同”': ['Ikke nok billeder med optagelser her – prøv „Find ens“', 'Not enough pictures with recordings here – try "Find the same"'],
+
+  /* 汉字游戏 */
+  '字': ['Tegn', 'Characters'], '学过的字': ['Lærte tegn', 'Learned'], '全部 6 组': ['Alle 6', 'All 6'], '全部 {0} 个': ['Alle {0}', 'All {0}'], '第 {0} / {1} 个': ['{0} / {1}', '{0} / {1}'],
+  '“{0}”加哪一笔，会变成一个新字？': ['Hvilket strøg skal „{0}“ have for at blive et nyt tegn?', 'Which stroke turns "{0}" into a new character?'],
+  '变！✨ ': ['Simsalabim! ✨ ', 'Abracadabra! ✨ '], '{0} 加一{1}，变成 {2}': ['{0} + {1} = {2}', '{0} + {1} = {2}'],
+  '学过的字还不够，先选“全部 6 组”': ['For få lærte tegn – vælg „Alle 6“', 'Not enough learned characters – choose "All 6"'],
+  '个魔术都变完啦！✨': [' tryllenumre klaret! ✨', ' magic tricks done! ✨'], '不是这一笔哦，再想想 🤔': ['Ikke det strøg – tænk igen 🤔', 'Not that stroke – think again 🤔'],
+  '象形字还不够': ['Ikke nok billedtegn', 'Not enough pictographs'], '全部': ['Alle', 'All'], '下一个字': ['Næste tegn', 'Next character'], '写好啦！': ['Færdig!', 'Done!'],
+  '写第 {0} 笔': ['skriver strøg {0}', 'writes stroke {0}'], '看一遍笔顺': ['Se strøgrækkefølgen', 'Watch the stroke order'],
+  '不对哦，看橙色的提示再写': ['Ikke helt – følg det orange hint', 'Not quite – follow the orange hint'], '写对了，这一笔不加分': ['Rigtigt, men ingen point for dette strøg', 'Correct, but no point for this stroke'],
+  '{0}先写': ['{0} starter', '{0} starts'], '还没有学过的字': ['Ingen lærte tegn endnu', 'No characters learned yet'],
+  '笔顺数据加载不了，请检查网络': ['Strøgdata kunne ikke hentes – tjek internettet', 'Couldn\'t load stroke data – check the internet'], '看老师写一遍': ['Se læreren skrive', 'Watch the teacher write'],
+  '棋盘': ['Bræt', 'Board'], '选一格，读出来': ['vælg et felt og læs det højt', 'pick a square and read it aloud'], '连成三个，赢啦！🏆': [' har tre på stribe og vinder! 🏆', ' got three in a row and wins! 🏆'],
+  '格子占满啦！': ['Brættet er fyldt! ', 'The board is full! '], '占下一格 ⭐': [' tager feltet ⭐', ' takes the square ⭐'],
+  '听老师读一遍，这一格先空着': ['Lyt til læreren – feltet forbliver tomt', 'Listen to the teacher – the square stays empty'],
+
+  /* 游戏总览 */
+  '团队对抗': ['Holdkamp', 'Team battles'], '分 2–4 队比赛，适合全班一起玩': ['2–4 hold dyster – godt for hele klassen', '2–4 teams compete – great for the whole class'],
+  '听音选择': ['Lyt og vælg', 'Listen & choose'], '听老师的录音，选出对的拼音': ['Lyt til lærerens optagelse og vælg den rigtige pinyin', 'Listen to the teacher\'s recording and pick the right pinyin'],
+  '记忆游戏': ['Huskespil', 'Memory games'], '看一看、记一记，第三节课也不累': ['Kig og husk – også godt i tredje lektion', 'Look and remember – fine even in the third lesson'],
+  '拼一拼': ['Stav', 'Spelling'], '声母和韵母碰一碰，认识声母车站': ['Sæt initialer og finaler sammen, og lær stationerne at kende', 'Put initials and finals together and get to know the stations'],
+  '汉字游戏': ['Tegn-spil', 'Character games'], '认字、写字，从象形字开始': ['Genkend og skriv tegn – vi starter med billedtegn', 'Read and write characters – starting with pictographs'],
+  '个游戏 · 只播放老师的录音 · Lyt, læs og leg': [' spil · kun lærerens egne optagelser', ' games · only the teacher\'s own recordings'],
+  '全部游戏': ['Alle spil', 'All games'], '换一个游戏': ['Skift spil', 'Switch game'],
+  '拼音毒药': ['Pinyin-gift', 'Pinyin poison'], '先读再翻，小心翻到毒药！': ['Læs, vend – og pas på giften!', 'Read, flip – and watch out for the poison!'],
+  '读出卡片上的拼音再点开：安全卡 +1，毒药 −2。': ['Læs kortets pinyin højt og vend det: sikkert kort +1, gift −2.', 'Read the pinyin aloud, then flip: safe card +1, poison −2.'],
+  '拼音飞行棋': ['Pinyin-flyspil', 'Pinyin plane race'], '掷骰子往前飞，停在哪格读哪格。': ['Slå med terningen og læs det felt, I lander på.', 'Roll the dice and read the square you land on.'],
+  '掷骰子前进，读对了留下，没读对飞回原来的位置。先到终点的队赢。': ['Slå og flyv frem. Læst rigtigt: bliv. Ikke rigtigt: flyv tilbage. Første hold i mål vinder.', 'Roll and move. Read it right: stay. Not right: fly back. First team to the finish wins.'],
+  '拼音连三子': ['Pinyin tre på stribe', 'Pinyin three in a row'], '读对了占一格，连成三个就赢。': ['Læs rigtigt og tag feltet – tre på stribe vinder.', 'Read it right to take the square – three in a row wins.'],
+  '每队选一格读出来，读对了占下这一格。横、竖、斜连成三个就赢。': ['Holdene vælger et felt og læser det. Læst rigtigt = feltet er jeres. Tre vandret, lodret eller på skrå vinder.', 'Each team picks a square and reads it. Read it right and it\'s yours. Three across, down or diagonally wins.'],
+  '拼音打地鼠': ['Pinyin muldvarpe', 'Pinyin whack-a-mole'], '听老师读，打中对的那只地鼠。': ['Lyt til læreren og ram den rigtige muldvarp.', 'Listen to the teacher and hit the right mole.'],
+  '听录音，点出读的那个拼音。每队轮流，打中得 1 分。': ['Lyt og tryk på den pinyin, I hører. Holdene skiftes – et træf giver 1 point.', 'Listen and tap the pinyin you hear. Teams take turns – a hit scores 1 point.'],
+  '听音找飞机': ['Find flyet', 'Find the plane'], '比一比': ['Sammenlign', 'Compare'], '听一听，选对了飞机往前飞。': ['Lyt og vælg – rigtigt svar får flyet frem.', 'Listen and choose – a right answer moves the plane.'],
+  '听录音选拼音，选对了飞机前进一格。可以选“比一比”练易混音。': ['Lyt og vælg pinyin – rigtigt svar = et felt frem. Vælg „Sammenlign“ for lyde, der ligner hinanden.', 'Listen and pick the pinyin – right answer = one square forward. Choose "Compare" for sounds that are easy to mix up.'],
+  '拼音不见了': ['Hvem forsvandt?', 'What\'s missing?'], '记住卡片，猜猜哪一张不见了。': ['Husk kortene og gæt, hvilket der forsvandt.', 'Remember the cards and guess which one vanished.'],
+  '先记住所有卡片，倒数结束后有一张会消失，大家猜一猜是哪一张。': ['Husk alle kortene. Når nedtællingen slutter, forsvinder ét – gæt hvilket.', 'Remember all the cards. When the countdown ends, one disappears – guess which.'],
+  '拼音翻翻乐': ['Pinyin vendespil', 'Pinyin memory'], '翻两张牌，找出拼音和图片的一对。': ['Vend to kort og find pinyin og billede, der passer sammen.', 'Flip two cards to match pinyin with its picture.'],
+  '每次翻两张，一样的一对就得分，还能再翻一次；不一样就翻回去，换下一队。': ['Vend to kort ad gangen. Et par giver point og en tur mere; ellers vendes de om, og næste hold er på.', 'Flip two cards at a time. A pair scores and you go again; otherwise they flip back and the next team plays.'],
+  '碰一碰': ['Bang sammen', 'Bang together'], '老师演示': ['Læreren viser', 'Teacher demo'], '声母加韵母，看看能不能拼。': ['Initial + final – kan de sættes sammen?', 'Initial + final – do they go together?'],
+  '点一个声母和一个韵母，按“碰！”看能不能拼在一起。': ['Vælg en initial og en final, og tryk „Bang!“ for at se, om de kan sættes sammen.', 'Pick an initial and a final, then press "Bang!" to see if they go together.'],
+  '拼音小邮差': ['Pinyin-postbud', 'Pinyin postman'], '看拼音和图，把信送到声母车站。': ['Se pinyin og billede, og bring brevet til stationen.', 'Look at the pinyin and picture, and deliver the letter to its station.'],
+  '看拼音和图片，把信送到它的声母车站。': ['Se pinyin og billede, og bring brevet til den rigtige initial-station.', 'Look at the pinyin and picture, and deliver the letter to the right initial station.'],
+  '加一笔变魔术': ['Tryllestrøget', 'Magic stroke'], '给字加一笔，变出一个新字！': ['Tilføj ét strøg og tryl et nyt tegn frem!', 'Add one stroke and magic up a new character!'],
+  '看看这个字加哪一笔会变成新字：人 + 横 = 大。选对了，新的一笔会变出来。': ['Hvilket strøg gør tegnet til et nyt? 人 + 横 = 大. Vælger I rigtigt, trylles strøget frem.', 'Which stroke makes a new character? 人 + 横 = 大. Choose right and the stroke appears like magic.'],
+  '象形字配对': ['Billedtegn-vendespil', 'Pictograph memory'], '太阳和“日”是一对，翻牌找出来。': ['Solen og „日“ hører sammen – find parrene.', 'The sun and "日" belong together – find the pairs.'],
+  '每次翻两张，图片和它的象形字是一对。找到一对得分，还能再翻一次。': ['Vend to kort ad gangen – et billede og dets tegn er et par. Et par giver point og en tur mere.', 'Flip two cards at a time – a picture and its character make a pair. A pair scores and you go again.'],
+  '笔顺接力': ['Strøg-stafet', 'Stroke relay'], '每队轮流写一笔，接力写完一个字。': ['Holdene skriver ét strøg hver, til tegnet er færdigt.', 'Teams take turns writing one stroke until the character is done.'],
+  '在田字格里按笔顺写，每队轮流写一笔。一次写对 +1 分，写错会出现橙色提示。': ['Skriv i ruden i den rigtige rækkefølge, ét strøg pr. hold. Rigtigt i første forsøg +1; fejl giver et orange hint.', 'Write in the grid in stroke order, one stroke per team. Right first time +1; a mistake shows an orange hint.'],
+
+  /* 汉字卡 */
+  '下一次课': ['Næste time', 'Next class'], '还没有学汉字': ['Vi har ikke lært tegn endnu', 'No characters learned yet'], '一共 {0} 笔': ['{0} strøg i alt', '{0} strokes in total'],
+  '比一比：': ['Sammenlign: ', 'Compare: '], '汉字卡': ['Tegnkort', 'Character cards'], '每周一个字 · Ugens tegn': ['Ugens tegn', 'A character a week'],
+  '看笔顺': ['Se strøgene', 'Watch strokes'], '一笔一笔': ['Strøg for strøg', 'Stroke by stroke'], '我来写': ['Jeg skriver', 'I\'ll write'],
+  '笔顺动画加载不了，先看字和笔画名称': ['Animationen kunne ikke hentes – se tegnet og strøgnavnene', 'The animation couldn\'t load – see the character and stroke names'],
+  '笔顺动画还没加载好': ['Animationen er ikke klar endnu', 'The animation isn\'t ready yet'], '写完啦！': ['Færdig!', 'Done!'], '看老师写': ['Se læreren skrive', 'Watch the teacher'],
+  '第 {0} 笔：{1}。写完啦！再点一次从头开始': ['Strøg {0}: {1}. Færdig! Tryk igen for at starte forfra', 'Stroke {0}: {1}. Done! Tap again to start over'],
+  '第 {0} 笔：{1}': ['Strøg {0}: {1}', 'Stroke {0}: {1}'], '第 {0} 笔写对了！': ['Strøg {0} er rigtigt!', 'Stroke {0} is right!'],
+  '不对哦，看看橙色的提示再写': ['Ikke helt – følg det orange hint', 'Not quite – follow the orange hint'], '写对啦！⭐': ['Rigtigt skrevet! ⭐', 'Well written! ⭐'],
+  '用手指或鼠标在田字格里写': ['Skriv i ruden med fingeren eller musen', 'Write in the grid with your finger or the mouse'],
+
+  /* 家长、资源库 */
+  '课上': ['I timen', 'In class'], '在家练': ['Øv hjemme', 'Practise at home'], '这周学了什么 · 在家怎么练 · Ugens pinyin': ['Hvad vi lærte · Sådan øver I hjemme', 'What we learned · How to practise at home'],
+  '在家陪练小贴士': ['Gode råd til at øve hjemme', 'Tips for practising at home'], '每天 5–10 分钟，比一周一次练很久更有效。': ['5–10 minutter hver dag virker bedre end én lang gang om ugen.', '5–10 minutes a day works better than one long session a week.'],
+  '拼读口诀：': ['Huskeremse til at sætte lyde sammen: ', 'Blending rhyme: '],
+  '。先拆（g—ē），再拼（gē），最后说一个词（鸽子）。': ['. Del først op (g—ē), sæt så sammen (gē), og sig til sidst et ord (鸽子).', '. First split (g—ē), then blend (gē), and finally say a word (鸽子).'],
+  '孩子能听懂中文是很大的优势：拼出一个音节，就问“这是哪个词里的音？”': ['Det er en stor fordel, at barnet forstår kinesisk: når det har stavet en stavelse, så spørg „Hvilket ord hører den til?“', 'It\'s a big advantage that your child understands Chinese: after blending a syllable, ask "Which word is that sound in?"'],
+  '可以用 {0} 和 {1} 在家练。游戏里只播放老师的录音；拼音表里还没有录音的音节由浏览器朗读，个别声调可能不准，以老师课上读音为准。': ['Brug {0} og {1} til at øve hjemme. Spillene bruger kun lærerens optagelser; i pinyin-tavlen læser browseren de stavelser op, der ikke er optaget endnu – tonerne kan være lidt forkerte, så følg lærerens udtale.', 'Use {0} and {1} to practise at home. The games only play the teacher\'s recordings; in the pinyin chart the browser reads syllables that haven\'t been recorded yet – some tones may be off, so follow the teacher\'s pronunciation.'],
+  '打开': ['Åbn', 'Open'], '老师课上用': ['Bruges af læreren i timen', 'Used by the teacher in class'],
+  '按教学进度整理 · 点开就能打印或投影': ['Sorteret efter undervisningen · åbn for at printe eller vise', 'Sorted by lesson · open to print or project'],
+  '以后会用到': ['Kommer senere', 'Coming later'], '学到对应内容后会自动亮起来。': ['Lyser op af sig selv, når vi når dertil.', 'Lights up automatically once we get there.'],
+};
