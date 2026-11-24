@@ -131,9 +131,6 @@ window.SYL = {
    这里写 'img/文件名.png'。没有例词的声调只显示例字。 */
 window.EX = {
   a1: ['阿姨', '👩', 'auntie'], o1: ['喔喔叫', '🐓', 'cock-a-doodle-doo'], e2: ['大白鹅', '🦢', 'white goose'], e4: ['饿了', '🍽️', 'hungry'],
-  i1: ['衣服', '👕', 'clothes'], i2: ['阿姨', '👩', 'auntie'], i3: ['椅子', '🪑', 'chair'], i4: ['意大利面', '🍝', 'spaghetti'],
-  u1: ['乌鸦', '🐦', 'crow'], u3: ['五个', '🖐️', 'five'], u4: ['大雾', '🌫️', 'thick fog'],
-  v2: ['小鱼', '🐟', 'little fish'], v3: ['下雨', '🌧️', 'raining'], v4: ['玉米', '🌽', 'corn'],
   ba1: ['八戒', '🐷', 'Pigsy'], ba2: ['拔萝卜', '🥕', 'pull up a carrot'], ba3: ['一把伞', '☂️', 'an umbrella'], ba4: ['爸爸', '👨', 'dad'],
   bo1: ['波浪', '🌊', 'waves'], bo2: ['脖子', '🧣', 'neck'], bi2: ['鼻子', '👃', 'nose'], bi3: ['铅笔', '✏️', 'pencil'],
   bu3: ['补衣服', '🧵', 'mend clothes'], bu4: ['花布', '🧶', 'cloth'],
